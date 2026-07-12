@@ -196,11 +196,15 @@ uv run ./src/research/cli.py
 uv run ./src/research/cli.py factor update-all
 uv run ./src/research/cli.py tushare-factor pull-by-date-range
 
-# API
+# 开发态一键启动（API :8000 + Admin :5173；调度默认随 API 内嵌）
+uv run ./start.py
+uv run ./start.py --only api                   # 或 --only admin
+uv run ./start.py --standalone-scheduler       # API 关内嵌 + 独立 quantus-scheduler
+uv run ./start.py --list
+
+# API / Admin 单独起
 quantus-api                                    # = uvicorn src.api.main:app（见 pyproject scripts）
 uvicorn src.api.main:app --reload --port 8000  # 开发热重载
-
-# Admin
 cd src/web/admin && pnpm dev                   # http://localhost:5173
 
 # 同步单表结构（每个 *_entities.py 末尾都有 if __name__ == "__main__"）

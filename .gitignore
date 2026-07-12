@@ -81,3 +81,7 @@ Thumbs.db
 .cursor/
 .claude/settings.local.json
 **/cookies.json
+
+# ==================== 本机专用（不提交）====================
+# 跨盘启动公司盘 MacintoshHD 上的 PostgreSQL；仅个人 macOS 使用
+start_pg.py
