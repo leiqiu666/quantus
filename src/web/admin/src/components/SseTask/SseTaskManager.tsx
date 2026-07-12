@@ -150,6 +150,7 @@ async function runSingleSseTask(task: SseTask, dispatch: AppDispatch) {
       jobKey: task.jobKey,
       startDate: task.startDate,
       endDate: task.endDate,
+      backtest: task.backtest,
     });
     dispatch(setTaskSuccess({ id: task.id }));
     dispatch(setTaskFlash({ id: task.id, flash: 'success' }));

@@ -19,9 +19,34 @@ export function etlTaskMatchKey(
   taskKey: string,
   startDate: string,
   endDate?: string,
+  backtestKey?: string,
 ): string {
   const end = normalizeEtlTaskEndDate(startDate, endDate);
-  return `${taskKey}|${startDate}|${end}`;
+  const bt = backtestKey ? `|${backtestKey}` : '';
+  return `${taskKey}|${startDate}|${end}${bt}`;
+}
+
+export function backtestDedupKey(backtest?: {
+  backtestMode?: string;
+  factorName?: string;
+  comboId?: number;
+  groups?: number;
+  rebalance?: string;
+  commissionRate?: number;
+  stampDutyRate?: number;
+  slippageRate?: number;
+}): string | undefined {
+  if (!backtest) return undefined;
+  return [
+    backtest.backtestMode ?? '',
+    backtest.factorName ?? '',
+    backtest.comboId ?? '',
+    backtest.groups ?? '',
+    backtest.rebalance ?? '',
+    backtest.commissionRate ?? '',
+    backtest.stampDutyRate ?? '',
+    backtest.slippageRate ?? '',
+  ].join(':');
 }
 
 export function isEtlTaskActive(status: SseTaskStatus): boolean {
@@ -48,15 +73,28 @@ export function findActiveEtlTask(
   taskKey: string,
   startDate: string,
   endDate?: string,
+  backtest?: {
+    backtestMode?: string;
+    factorName?: string;
+    comboId?: number;
+    groups?: number;
+    rebalance?: string;
+  },
 ): SseTask | undefined {
-  const key = etlTaskMatchKey(taskKey, startDate, endDate);
+  const bt = backtestDedupKey(backtest);
+  const key = etlTaskMatchKey(taskKey, startDate, endDate, bt);
 
   const direct = tasks.find(
     (t) =>
       t.mode !== 'schedule_job' &&
       t.mode !== 'row_sequence' &&
       isEtlTaskActive(t.status) &&
-      etlTaskMatchKey(t.taskKey, t.startDate, t.endDate) === key,
+      etlTaskMatchKey(
+        t.taskKey,
+        t.startDate,
+        t.endDate,
+        backtestDedupKey(t.backtest),
+      ) === key,
   );
   if (direct) {
     return direct;
@@ -68,7 +106,8 @@ export function findActiveEtlTask(
       isEtlTaskActive(t.status) &&
       t.steps?.some(
         (step) =>
-          etlTaskMatchKey(step.taskKey, step.startDate, step.endDate) === key,
+          etlTaskMatchKey(step.taskKey, step.startDate, step.endDate) ===
+          etlTaskMatchKey(taskKey, startDate, endDate),
       ),
   );
 }

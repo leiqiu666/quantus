@@ -27,6 +27,16 @@ export type EtlTaskParams = {
   label: string;
   startDate: string;
   endDate?: string;
+  backtest?: {
+    backtestMode: 'single' | 'combo';
+    factorName?: string;
+    comboId?: number;
+    groups?: number;
+    rebalance?: string;
+    commissionRate?: number;
+    stampDutyRate?: number;
+    slippageRate?: number;
+  };
 };
 
 export type RowSequenceStepParams = EtlTaskParams & {
@@ -61,6 +71,7 @@ function buildTaskPayload(params: EtlTaskParams, id: string) {
     taskKey: params.taskKey,
     startDate: params.startDate,
     endDate: params.endDate,
+    backtest: params.backtest,
   };
 }
 
@@ -81,19 +92,28 @@ export function useSseTask() {
   const tasks = useAppSelector((s) => s.sseTask.tasks);
 
   const isEtlTaskDuplicate = useCallback(
-    (params: Pick<EtlTaskParams, 'taskKey' | 'startDate' | 'endDate'>) =>
+    (
+      params: Pick<
+        EtlTaskParams,
+        'taskKey' | 'startDate' | 'endDate' | 'backtest'
+      >,
+    ) =>
       findActiveEtlTask(
         store.getState().sseTask.tasks,
         params.taskKey,
         params.startDate,
         params.endDate,
+        params.backtest,
       ) !== undefined,
     [tasks],
   );
 
   const guardEtlTask = useCallback(
     (
-      params: Pick<EtlTaskParams, 'taskKey' | 'startDate' | 'endDate'>,
+      params: Pick<
+        EtlTaskParams,
+        'taskKey' | 'startDate' | 'endDate' | 'backtest'
+      >,
     ): boolean => {
       if (isEtlTaskDuplicate(params)) {
         message.warning(ETL_TASK_DUPLICATE_MESSAGE);

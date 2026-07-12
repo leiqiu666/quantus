@@ -9,6 +9,29 @@ class EtlSseRunRequest(BaseModel):
         pattern=r"^\d{8}$",
         description="结束 YYYYMMDD；report history init 类任务可省略",
     )
+    # 仅 task_key=backtest_run 使用
+    backtest_mode: str | None = Field(
+        default=None, description="single | combo（backtest_run）"
+    )
+    factor_name: str | None = Field(default=None, description="单因子名")
+    combo_id: int | None = Field(default=None, description="因子组合 ID")
+    groups: int | None = Field(default=10, description="分组数，默认 10")
+    rebalance: str | None = Field(
+        default="monthly", description="monthly | weekly"
+    )
+    commission_rate: float | None = Field(
+        default=None, description="佣金费率，默认 0.0003"
+    )
+    stamp_duty_rate: float | None = Field(
+        default=None, description="印花税（卖出），默认 0.001"
+    )
+    slippage_rate: float | None = Field(
+        default=None, description="滑点费率，默认 0"
+    )
+    # task_key=gtja191_compute 可选
+    workers: int | None = Field(
+        default=None, description="国泰191 月内并行进程数；默认自动探测"
+    )
 
     @model_validator(mode="after")
     def validate_range(self) -> "EtlSseRunRequest":

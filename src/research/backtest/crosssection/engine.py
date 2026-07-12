@@ -35,7 +35,7 @@ class BacktestResult:
 class CrossSectionEngine:
     def __init__(
         self,
-        strategy: SingleFactorStrategy,
+        strategy: SingleFactorStrategy | object,
         universe: UniverseDataset | None = None,
         cost_model: CostModel | None = None,
         rebalance_freq: str = "monthly",
@@ -68,18 +68,25 @@ class CrossSectionEngine:
             raise RuntimeError("调仓日不足 2 个，无法回测")
 
         # 预加载日 K（后复权收益 + 涨跌停约束）
-        kline = (
-            self._kline.read_range(start, end)
-            .select(
-                "ts_code",
-                "trade_date",
-                "close",
-                "close_adj",
-                "up_limit",
-                "down_limit",
+        kline_lf = self._kline.read_range(start, end)
+        # adj_factor 用于质量告警（列可能不存在）
+        try:
+            kline = kline_lf.collect()
+        except Exception:
+            kline = (
+                kline_lf.select(
+                    "ts_code",
+                    "trade_date",
+                    "close",
+                    "close_adj",
+                    "up_limit",
+                    "down_limit",
+                ).collect()
             )
-            .collect()
-        )
+        need = {"ts_code", "trade_date", "close", "close_adj", "up_limit", "down_limit"}
+        missing_cols = [c for c in need if c not in kline.columns]
+        if missing_cols:
+            raise RuntimeError(f"日 K 缺列: {missing_cols}")
         if kline.is_empty():
             raise RuntimeError(f"日 K 为空: {start}~{end}")
 
@@ -93,18 +100,23 @@ class CrossSectionEngine:
         daily_rows: list[dict] = []
         ic_rows: list[dict] = []
         turnovers: list[float] = []
+        turnover_rows: list[dict] = []
+        n_rebalance_used = 0
 
         factor_name = self.strategy.factor_name
+        factor_names = list(
+            getattr(self.strategy, "factor_names", None) or [factor_name]
+        )
 
         for i, td in enumerate(rebalance_dates[:-1]):
             next_td = rebalance_dates[i + 1]
             uni = self.universe.all_a(td)
-            factor_cs = self._factors.read_multi([factor_name], td)
+            factor_cs = self._factors.read_multi(factor_names, td)
             if factor_cs.is_empty():
-                # 无因子：空仓直到下一调仓
                 holdings = {g: {} for g in group_ids}
                 continue
 
+            n_rebalance_used += 1
             raw_targets = self.strategy.target_weights(td, factor_cs, uni)
             blocked = limit_blocked.get(td, set())
             tradable = set(uni) - blocked
@@ -140,15 +152,31 @@ class CrossSectionEngine:
                         }
                     )
             holdings = clean_holdings
-            turnovers.append(day_turnover / max(self._n_groups, 1))
+            avg_to = day_turnover / max(self._n_groups, 1)
+            turnovers.append(avg_to)
+            turnover_rows.append({"trade_date": td, "turnover": avg_to})
 
-            # IC：因子 vs 持有期收益（td → next_td）
+            # IC：因子（或综合分）vs 持有期收益（td → next_td）
             period_ret = self._holding_period_return(ret_map, open_dates, td, next_td)
-            fvals = {
-                r["ts_code"]: float(r[factor_name])
-                for r in factor_cs.iter_rows(named=True)
-                if r.get(factor_name) is not None and r["ts_code"] in uni
-            }
+            compose = getattr(self.strategy, "compose_scores", None)
+            if callable(compose):
+                scored = compose(factor_cs)
+                fvals = {
+                    r["ts_code"]: float(r["value"])
+                    for r in scored.iter_rows(named=True)
+                    if r.get("value") is not None and r["ts_code"] in uni
+                }
+            else:
+                value_col = (
+                    "value"
+                    if "value" in factor_cs.columns
+                    else factor_name
+                )
+                fvals = {
+                    r["ts_code"]: float(r[value_col])
+                    for r in factor_cs.iter_rows(named=True)
+                    if r.get(value_col) is not None and r["ts_code"] in uni
+                }
             ic, rank_ic = calc_ic_row(fvals, period_ret)
             ic_rows.append({"trade_date": td, "ic": ic, "rank_ic": rank_ic})
 
@@ -197,10 +225,21 @@ class CrossSectionEngine:
         g0_metrics = metrics_from_frame(daily_df, "G0") if not daily_df.is_empty() and "G0" in daily_df.columns else {}
         ic_stats = ic_summary(ic_df)
 
+        warnings = self._build_warnings(
+            open_dates=open_dates,
+            n_rebalance=n_rebalance_used,
+            kline=kline,
+            ret_map=ret_map,
+        )
+
         run_id = datetime.now().strftime("%Y%m%d_%H%M%S") + "_" + uuid4().hex[:8]
-        strategy_name = f"single_factor_{factor_name}"
+        if hasattr(self.strategy, "factor_names"):
+            strategy_name = f"multi_factor_{factor_name}"
+        else:
+            strategy_name = f"single_factor_{factor_name}"
         out_dir = self._root / "backtest" / strategy_name / run_id
 
+        cm = self.cost_model
         summary = {
             "strategy": strategy_name,
             "factor": factor_name,
@@ -210,6 +249,15 @@ class CrossSectionEngine:
             "groups": self._n_groups,
             "run_id": run_id,
             "avg_turnover": (sum(turnovers) / len(turnovers)) if turnovers else None,
+            "n_rebalance": n_rebalance_used,
+            "n_trade_days": len(open_dates),
+            "benchmark": "000300.SH",
+            "cost": {
+                "commission_rate": cm.commission_rate,
+                "stamp_duty_rate": cm.stamp_duty_rate,
+                "slippage_rate": cm.slippage_rate,
+            },
+            "warnings": warnings,
             **ic_stats,
             "sharpe": ls_metrics.get("sharpe"),
             "annual_return": ls_metrics.get("annual_return"),
@@ -219,6 +267,14 @@ class CrossSectionEngine:
             "output_dir": str(out_dir),
         }
 
+        turnover_df = (
+            pl.DataFrame(turnover_rows)
+            if turnover_rows
+            else pl.DataFrame(
+                schema={"trade_date": pl.Utf8, "turnover": pl.Float64}
+            )
+        )
+
         write_backtest_output(
             out_dir,
             portfolio=portfolio_df,
@@ -226,6 +282,7 @@ class CrossSectionEngine:
             returns=daily_df,
             ic=ic_df,
             summary=summary,
+            turnover=turnover_df,
         )
         print_summary(summary)
 
@@ -237,6 +294,43 @@ class CrossSectionEngine:
             summary=summary,
             output_dir=str(out_dir),
         )
+
+    @staticmethod
+    def _build_warnings(
+        *,
+        open_dates: list[str],
+        n_rebalance: int,
+        kline: pl.DataFrame,
+        ret_map: dict[tuple[str, str], float],
+    ) -> list[str]:
+        out: list[str] = []
+        if n_rebalance < 3:
+            out.append(f"调仓次数仅 {n_rebalance}（建议 ≥3），统计不稳定")
+        if len(open_dates) < 60:
+            out.append(f"开市日仅 {len(open_dates)}（建议 ≥60），短样本")
+
+        # 任一日收益中位数异常
+        by_day: dict[str, list[float]] = {}
+        for (_code, d), r in ret_map.items():
+            by_day.setdefault(d, []).append(r)
+        for d, rs in by_day.items():
+            if not rs:
+                continue
+            s = sorted(rs)
+            mid = s[len(s) // 2]
+            if abs(mid) > 0.20:
+                out.append(f"{d} 全市场后复权收益中位数 {mid:.1%}，疑似复权异常")
+                break
+
+        if "adj_factor" in kline.columns:
+            n = kline.height
+            if n > 0:
+                null_n = kline.filter(pl.col("adj_factor").is_null()).height
+                if null_n / n > 0.05:
+                    out.append(
+                        f"区间内 adj_factor 空值占比 {null_n / n:.1%}（>5%），收益可能失真"
+                    )
+        return out
 
     @staticmethod
     def _build_daily_ret_map(kline: pl.DataFrame) -> dict[tuple[str, str], float]:

@@ -18,6 +18,8 @@ router = APIRouter(
 _SSE_DESC = (
     "通用 ETL 补位 SSE：task_key 映射 Strategy.check_complete / pull / report_history_init。"
     " report history init 类仅使用 start_date 作为报告期锚点。"
+    " task_key=backtest_run 时使用扩展字段 backtest_mode / factor_name / combo_id 等。"
+    " task_key=gtja191_compute 时可传 workers。"
 )
 
 
@@ -39,7 +41,24 @@ async def run_etl_sse(
     start = body.start_date
 
     def _worker(q):
-        runner(start, end, q)
+        if body.task_key == "backtest_run":
+            runner(
+                start,
+                end,
+                q,
+                backtest_mode=body.backtest_mode or "single",
+                factor_name=body.factor_name,
+                combo_id=body.combo_id,
+                groups=body.groups or 10,
+                rebalance=body.rebalance or "monthly",
+                commission_rate=body.commission_rate,
+                stamp_duty_rate=body.stamp_duty_rate,
+                slippage_rate=body.slippage_rate,
+            )
+        elif body.task_key == "gtja191_compute":
+            runner(start, end, q, workers=body.workers)
+        else:
+            runner(start, end, q)
 
     return StreamingResponse(
         sse_event_stream(_worker, thread_name=f"etl_sse_{body.task_key}"),

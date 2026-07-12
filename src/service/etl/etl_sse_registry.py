@@ -282,24 +282,49 @@ SSE_TASK_REGISTRY: dict[str, Callable[..., None]] = {
     "stock_share_float_check": lambda start, end, q: _run_check(
         StockShareFloatStrategy().check_complete, start, end, q,
     ),
-    "gtja191_compute": lambda start, end, q: _run_gtja191_compute(start, end, q),
+    "gtja191_compute": lambda start, end, q, **kwargs: _run_gtja191_compute(
+        start, end, q, **kwargs
+    ),
+    "backtest_run": lambda start, end, q, **kwargs: _run_backtest(start, end, q, **kwargs),
 }
 
 
-def _run_gtja191_compute(start: str, end: str, progress_queue: queue.Queue) -> None:
+def _run_gtja191_compute(
+    start: str, end: str, progress_queue: queue.Queue, **kwargs
+) -> None:
     from src.research.factor.gtja.strategy import Gtja191Strategy
     from src.research.factor.meta_service import FactorMetaService
 
+    workers = kwargs.get("workers")
     Gtja191Strategy().compute_by_date_range(
         start_date=start,
         end_date=end,
         force=False,
+        workers=int(workers) if workers is not None else None,
         progress_queue=progress_queue,
     )
     try:
         FactorMetaService().update_meta()
     except Exception as e:
         progress_queue.put({"log": f"update-meta 失败: {e}"})
+
+
+def _run_backtest(start: str, end: str, progress_queue: queue.Queue, **kwargs) -> None:
+    from src.research.backtest.runner import BacktestRunner
+
+    BacktestRunner().run(
+        start_date=start,
+        end_date=end,
+        backtest_mode=kwargs.get("backtest_mode") or "single",
+        factor_name=kwargs.get("factor_name"),
+        combo_id=kwargs.get("combo_id"),
+        groups=int(kwargs.get("groups") or 10),
+        rebalance=kwargs.get("rebalance") or "monthly",
+        commission_rate=kwargs.get("commission_rate"),
+        stamp_duty_rate=kwargs.get("stamp_duty_rate"),
+        slippage_rate=kwargs.get("slippage_rate"),
+        progress_queue=progress_queue,
+    )
 
 
 def get_sse_task_runner(task_key: str) -> Callable[..., None]:

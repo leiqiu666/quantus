@@ -249,6 +249,7 @@ def _run_gtja191_compute(
     end_month: str | None = None,
     alpha: int | None = None,
     force: bool = False,
+    workers: int | None = None,
 ) -> None:
     from src.research.factor.gtja.strategy import Gtja191Strategy
     from src.research.factor.meta_service import FactorMetaService
@@ -269,6 +270,7 @@ def _run_gtja191_compute(
         end_month=end_month,
         alpha=alpha,
         force=force,
+        workers=workers,
     )
     FactorMetaService().update_meta()
 
@@ -279,9 +281,12 @@ def gtja191_compute(
     end_month: str | None = typer.Option(None, "--end-month", help="结束月 YYYYMM"),
     alpha: int | None = typer.Option(None, "--alpha", help="只算指定 Alpha 编号"),
     force: bool = typer.Option(False, "--force", help="强制重算已有分区"),
+    workers: int | None = typer.Option(
+        None, "--workers", help="月内并行进程数；默认自动探测（可用 GTJA191_WORKERS）"
+    ),
 ) -> None:
     """计算国泰191因子到 Parquet（Alpha30 跳过），并刷新 factor_meta。"""
-    _run_gtja191_compute(start_month, end_month, alpha, force)
+    _run_gtja191_compute(start_month, end_month, alpha, force, workers)
 
 
 _MENU_HANDLERS: dict[str, Callable[[], None]] = {

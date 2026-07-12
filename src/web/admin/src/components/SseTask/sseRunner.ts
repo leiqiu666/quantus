@@ -25,6 +25,16 @@ export interface EtlSseRunParams {
   jobKey?: string;
   startDate: string;
   endDate?: string;
+  backtest?: {
+    backtestMode: 'single' | 'combo';
+    factorName?: string;
+    comboId?: number;
+    groups?: number;
+    rebalance?: string;
+    commissionRate?: number;
+    stampDutyRate?: number;
+    slippageRate?: number;
+  };
 }
 
 export interface ExecuteEtlSseOptions extends EtlSseRunParams {
@@ -52,11 +62,36 @@ function resolveBody(params: EtlSseRunParams): Record<string, unknown> {
   if (params.mode === 'report_history') {
     return { start_date: params.startDate };
   }
-  return {
+  const body: Record<string, unknown> = {
     task_key: params.taskKey,
     start_date: params.startDate,
     end_date: params.endDate ?? params.startDate,
   };
+  if (params.taskKey === 'backtest_run' && params.backtest) {
+    body.backtest_mode = params.backtest.backtestMode;
+    if (params.backtest.factorName) {
+      body.factor_name = params.backtest.factorName;
+    }
+    if (params.backtest.comboId != null) {
+      body.combo_id = params.backtest.comboId;
+    }
+    if (params.backtest.groups != null) {
+      body.groups = params.backtest.groups;
+    }
+    if (params.backtest.rebalance) {
+      body.rebalance = params.backtest.rebalance;
+    }
+    if (params.backtest.commissionRate != null) {
+      body.commission_rate = params.backtest.commissionRate;
+    }
+    if (params.backtest.stampDutyRate != null) {
+      body.stamp_duty_rate = params.backtest.stampDutyRate;
+    }
+    if (params.backtest.slippageRate != null) {
+      body.slippage_rate = params.backtest.slippageRate;
+    }
+  }
+  return body;
 }
 
 export function executeEtlSseStream(options: ExecuteEtlSseOptions): Promise<void> {

@@ -27,6 +27,7 @@ class Gtja191Strategy:
         end_month: str | None = None,
         alpha: int | None = None,
         force: bool = False,
+        workers: int | None = None,
         progress_queue: queue.Queue | None = None,
     ) -> int:
         months = self._kline.list_available_months()
@@ -59,7 +60,9 @@ class Gtja191Strategy:
         for i, ym in enumerate(tqdm_iter(months, desc="国泰191按月计算"), start=1):
             if progress_queue is not None:
                 progress_queue.put({"log": f"计算月份 {ym}（{i}/{n_months}）"})
-            part = self._engine.compute_month(ym, specs, force=force)
+            part = self._engine.compute_month(
+                ym, specs, force=force, workers=workers
+            )
             rows = sum(part.values())
             total_rows += rows
             ok_factors.update(part.keys())
@@ -85,6 +88,7 @@ class Gtja191Strategy:
         start_date: str,
         end_date: str,
         force: bool = False,
+        workers: int | None = None,
         progress_queue: queue.Queue | None = None,
     ) -> int:
         """SSE 入口：YYYYMMDD → 月份。"""
@@ -94,5 +98,6 @@ class Gtja191Strategy:
             start_month=sm,
             end_month=em,
             force=force,
+            workers=workers,
             progress_queue=progress_queue,
         )

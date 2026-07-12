@@ -21,6 +21,9 @@
 | [多源因子统一与读取层.sdd.md](./多源因子统一与读取层.sdd.md) | `FactorDataset` + `sync-pg` 扩展 | 权威源定界、热层含 tushare、OHLC 后复权 | **Phase 1.5 · 已实现** |
 | [截面回测.sdd.md](./截面回测.sdd.md) | `backtest run` | 自研截面引擎、IC/分组净值 | **Phase 2 · 已实现** |
 | [国泰191因子.sdd.md](./国泰191因子.sdd.md) | `gtja191 compute` / SSE `gtja191_compute` | 190 可算 Alpha → Parquet；Alpha30 仅 meta | **Phase 3 · 已实现** |
+| [国泰191-并行计算.sdd.md](./国泰191-并行计算.sdd.md) | 同上 + `--workers` / `GTJA191_WORKERS` | 月内多进程分片 + 算子向量化 | **已实现** |
+| [Admin-回测.sdd.md](./Admin-回测.sdd.md) | Admin `/quant/backtest` · `/quant/factor-combo` | 单因子/多因子组合截面回测（SSE）+ 详情增强 | **已实现** |
+| [Admin-投研分析.sdd.md](./Admin-投研分析.sdd.md) | Admin `/research/*` | 因子截面 / 个股K线 / 回测明细 / 行情快照 | **已实现** |
 
 数据对照：[`docs/国泰191-数据需求与ETL对照.md`](../../docs/国泰191-数据需求与ETL对照.md)。
 

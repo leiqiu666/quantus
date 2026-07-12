@@ -1,7 +1,7 @@
 # SDD · Admin · 因子管理页面
 
 > **路由：** `/quant/factor-list`
-> **菜单：** 量化交易 → 因子管理
+> **菜单：** 回测管理 → 因子管理
 > **依赖 API：** `GET /api/admin/quant/factor/list`（见 [`spec/api/admin/因子-因子列表.sdd.md`](../api/admin/因子-因子列表.sdd.md)）
 > **源码：** `src/web/admin/src/pages/quant/FactorList/index.tsx`
 
@@ -9,7 +9,7 @@
 
 ## 1. 概述
 
-在 Admin 后台新增「量化交易」一级菜单，下设「因子管理」页面。展示系统中所有可用因子（自研 + Tushare），包括名称、来源、分类、算法、数据覆盖区间。
+在 Admin 后台「回测管理」一级菜单下设「因子管理」页面。展示系统中所有可用因子（自研 + Tushare），包括名称、来源、分类、算法、数据覆盖区间。
 
 ---
 
@@ -20,7 +20,7 @@
 ```tsx
 {
   path: '/quant',
-  name: '量化交易',
+  name: '回测管理',
   icon: <StockOutlined />,
   children: [
     {
@@ -73,14 +73,14 @@ src/web/admin/src/
   types/
     quant.ts                 # FactorMetaItem 类型定义
   routes/
-    routes.config.tsx        # +量化交易菜单
+    routes.config.tsx        # +回测管理菜单
 ```
 
 ---
 
 ## 5. 验收
 
-1. 左侧菜单出现「量化交易 → 因子管理」
+1. 左侧菜单出现「回测管理 → 因子管理」
 2. 点击进入看到 95 个因子列表
 3. 按来源筛选 `tushare` → 显示 93 个
 4. 按分类筛选 `基本面` → 显示基本面因子

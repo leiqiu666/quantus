@@ -17,6 +17,7 @@ def write_backtest_output(
     returns: pl.DataFrame,
     ic: pl.DataFrame,
     summary: dict[str, Any],
+    turnover: pl.DataFrame | None = None,
 ) -> Path:
     out_dir.mkdir(parents=True, exist_ok=True)
     if not portfolio.is_empty():
@@ -46,6 +47,13 @@ def write_backtest_output(
 
     returns.write_parquet(out_dir / "returns.parquet")
     ic.write_parquet(out_dir / "ic.parquet")
+
+    if turnover is not None:
+        turnover.write_parquet(out_dir / "turnover.parquet")
+    else:
+        pl.DataFrame(
+            schema={"trade_date": pl.Utf8, "turnover": pl.Float64}
+        ).write_parquet(out_dir / "turnover.parquet")
 
     report_path = out_dir / "report.json"
     with open(report_path, "w", encoding="utf-8") as f:

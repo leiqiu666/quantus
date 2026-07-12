@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import math
 from typing import Any
 
 import polars as pl
@@ -85,26 +84,23 @@ class OpsContext:
         )
 
     def WMA(self, x: Any, d: int) -> pl.Series:
+        """加权移动平均：窗口内权重 1..d（越新越大），纯 Polars 滞后求和。"""
         s = _as_series(x, self.ts_code)
         d = int(d)
-        weights = list(range(1, d + 1))
-        wsum = float(sum(weights))
-
-        def _one_group(arr: list[float | None]) -> list[float | None]:
-            out: list[float | None] = [None] * len(arr)
-            for i in range(d - 1, len(arr)):
-                window = arr[i - d + 1 : i + 1]
-                if any(v is None or (isinstance(v, float) and math.isnan(v)) for v in window):
-                    continue
-                out[i] = sum(float(v) * w for v, w in zip(window, weights)) / wsum
-            return out
-
-        parts = []
-        for _, g in pl.DataFrame({"ts_code": self.ts_code, "x": s}).group_by(
-            "ts_code", maintain_order=True
-        ):
-            parts.append(pl.Series(_one_group(g["x"].to_list())))
-        return pl.concat(parts) if parts else pl.Series([], dtype=pl.Float64)
+        if d <= 0:
+            return s
+        if d == 1:
+            return s
+        wsum = float(d * (d + 1) / 2)
+        # lag k 对应权重 (d-k)：当前 k=0 权重 d，最旧 k=d-1 权重 1
+        terms = [
+            pl.col("x").shift(k).over("ts_code") * float(d - k) for k in range(d)
+        ]
+        return (
+            pl.DataFrame({"ts_code": self.ts_code, "x": s})
+            .with_columns((pl.sum_horizontal(terms) / wsum).alias("y"))
+            ["y"]
+        )
 
     def TSMAX(self, x: Any, d: int) -> pl.Series:
         s = _as_series(x, self.ts_code)
@@ -186,29 +182,51 @@ class OpsContext:
             )["r"]
         )
 
+    def _apply_by_code_numpy(
+        self,
+        columns: dict[str, pl.Series],
+        fn,
+    ) -> pl.Series:
+        """按 ts_code 分组，用 NumPy 数组调用 fn(**arrays) -> 1d array。"""
+        import numpy as np
+
+        frame_cols = {"ts_code": self.ts_code, **columns}
+        df = pl.DataFrame(frame_cols)
+
+        def _g(g: pl.DataFrame) -> pl.DataFrame:
+            arrays = {k: g[k].to_numpy() for k in columns}
+            out = fn(**arrays)
+            if not isinstance(out, np.ndarray):
+                out = np.asarray(out, dtype=np.float64)
+            return pl.DataFrame({"y": out})
+
+        return (
+            df.group_by("ts_code", maintain_order=True)
+            .map_groups(_g)
+            ["y"]
+        )
+
     def TSRANK(self, x: Any, d: int) -> pl.Series:
+        import numpy as np
+
         s = _as_series(x, self.ts_code)
         d = int(d)
 
-        def _one(arr: list[float | None]) -> list[float | None]:
-            out: list[float | None] = [None] * len(arr)
-            for i in range(d - 1, len(arr)):
-                window = arr[i - d + 1 : i + 1]
+        def _fn(*, x: "np.ndarray") -> "np.ndarray":
+            n = len(x)
+            out = np.full(n, np.nan, dtype=np.float64)
+            for i in range(d - 1, n):
+                window = x[i - d + 1 : i + 1]
                 cur = window[-1]
-                if cur is None or (isinstance(cur, float) and math.isnan(cur)):
+                if cur is None or (isinstance(cur, float) and np.isnan(cur)):
                     continue
-                valid = [v for v in window if v is not None and not (isinstance(v, float) and math.isnan(v))]
-                if not valid:
+                valid = window[np.isfinite(window.astype(float, copy=False))]
+                if valid.size == 0:
                     continue
-                out[i] = sum(1 for v in valid if v <= cur) / float(len(valid))
+                out[i] = float(np.sum(valid <= float(cur)) / valid.size)
             return out
 
-        parts = []
-        for _, g in pl.DataFrame({"ts_code": self.ts_code, "x": s}).group_by(
-            "ts_code", maintain_order=True
-        ):
-            parts.append(pl.Series(_one(g["x"].to_list())))
-        return pl.concat(parts) if parts else pl.Series([], dtype=pl.Float64)
+        return self._apply_by_code_numpy({"x": s}, _fn)
 
     def CORR(self, x: Any, y: Any, d: int = 0) -> pl.Series:
         # CORR(a,b) 无窗口时默认 6（国泰部分公式省略）
@@ -254,48 +272,42 @@ class OpsContext:
         return self.SUM(masked, int(d))
 
     def HIGHDAY(self, x: Any, d: int) -> pl.Series:
+        import numpy as np
+
         s = _as_series(x, self.ts_code)
         d = int(d)
 
-        def _one(arr: list[float | None]) -> list[float | None]:
-            out: list[float | None] = [None] * len(arr)
-            for i in range(d - 1, len(arr)):
-                window = arr[i - d + 1 : i + 1]
-                if any(v is None or (isinstance(v, float) and math.isnan(v)) for v in window):
+        def _fn(*, x: "np.ndarray") -> "np.ndarray":
+            n = len(x)
+            out = np.full(n, np.nan, dtype=np.float64)
+            for i in range(d - 1, n):
+                window = x[i - d + 1 : i + 1].astype(float, copy=False)
+                if not np.isfinite(window).all():
                     continue
-                mx = max(window)  # type: ignore[type-var]
-                pos = len(window) - 1 - list(reversed(window)).index(mx)
-                out[i] = float(len(window) - 1 - pos)
+                pos = int(np.argmax(window))
+                out[i] = float(d - 1 - pos)
             return out
 
-        parts = []
-        for _, g in pl.DataFrame({"ts_code": self.ts_code, "x": s}).group_by(
-            "ts_code", maintain_order=True
-        ):
-            parts.append(pl.Series(_one(g["x"].to_list())))
-        return pl.concat(parts) if parts else pl.Series([], dtype=pl.Float64)
+        return self._apply_by_code_numpy({"x": s}, _fn)
 
     def LOWDAY(self, x: Any, d: int) -> pl.Series:
+        import numpy as np
+
         s = _as_series(x, self.ts_code)
         d = int(d)
 
-        def _one(arr: list[float | None]) -> list[float | None]:
-            out: list[float | None] = [None] * len(arr)
-            for i in range(d - 1, len(arr)):
-                window = arr[i - d + 1 : i + 1]
-                if any(v is None or (isinstance(v, float) and math.isnan(v)) for v in window):
+        def _fn(*, x: "np.ndarray") -> "np.ndarray":
+            n = len(x)
+            out = np.full(n, np.nan, dtype=np.float64)
+            for i in range(d - 1, n):
+                window = x[i - d + 1 : i + 1].astype(float, copy=False)
+                if not np.isfinite(window).all():
                     continue
-                mn = min(window)  # type: ignore[type-var]
-                pos = len(window) - 1 - list(reversed(window)).index(mn)
-                out[i] = float(len(window) - 1 - pos)
+                pos = int(np.argmin(window))
+                out[i] = float(d - 1 - pos)
             return out
 
-        parts = []
-        for _, g in pl.DataFrame({"ts_code": self.ts_code, "x": s}).group_by(
-            "ts_code", maintain_order=True
-        ):
-            parts.append(pl.Series(_one(g["x"].to_list())))
-        return pl.concat(parts) if parts else pl.Series([], dtype=pl.Float64)
+        return self._apply_by_code_numpy({"x": s}, _fn)
 
     def DECAYLINEAR(self, x: Any, d: int) -> pl.Series:
         return self.WMA(x, int(d))
@@ -304,65 +316,54 @@ class OpsContext:
         return int(n)
 
     def REGBETA(self, y: Any, x: Any, d: Any = None) -> pl.Series:
+        import numpy as np
+
         sy = _as_series(y, self.ts_code)
-        # REGBETA(y, n) → 对 SEQUENCE(n) 回归；REGBETA(y, x, n) → y 对 x 滚动回归
         if isinstance(x, pl.Series) or (d is not None and isinstance(d, (int, float))):
             sx = _as_series(x, self.ts_code)
             win = int(d) if d is not None else 20
 
-            def _one_xy(ys: list[float | None], xs: list[float | None]) -> list[float | None]:
-                out: list[float | None] = [None] * len(ys)
-                for i in range(win - 1, len(ys)):
-                    yw = ys[i - win + 1 : i + 1]
-                    xw = xs[i - win + 1 : i + 1]
-                    pairs = [
-                        (float(a), float(b))
-                        for a, b in zip(yw, xw)
-                        if a is not None
-                        and b is not None
-                        and not (isinstance(a, float) and math.isnan(a))
-                        and not (isinstance(b, float) and math.isnan(b))
-                    ]
-                    if len(pairs) < max(3, win // 2):
+            def _fn(*, y: "np.ndarray", x: "np.ndarray") -> "np.ndarray":
+                n = len(y)
+                out = np.full(n, np.nan, dtype=np.float64)
+                min_pts = max(3, win // 2)
+                for i in range(win - 1, n):
+                    yw = y[i - win + 1 : i + 1].astype(float, copy=False)
+                    xw = x[i - win + 1 : i + 1].astype(float, copy=False)
+                    mask = np.isfinite(yw) & np.isfinite(xw)
+                    if int(mask.sum()) < min_pts:
                         continue
-                    mean_x = sum(p[1] for p in pairs) / len(pairs)
-                    mean_y = sum(p[0] for p in pairs) / len(pairs)
-                    var_x = sum((p[1] - mean_x) ** 2 for p in pairs)
+                    yy = yw[mask]
+                    xx = xw[mask]
+                    mean_x = float(xx.mean())
+                    mean_y = float(yy.mean())
+                    var_x = float(np.sum((xx - mean_x) ** 2))
                     if var_x == 0:
                         continue
-                    cov = sum((p[1] - mean_x) * (p[0] - mean_y) for p in pairs)
+                    cov = float(np.sum((xx - mean_x) * (yy - mean_y)))
                     out[i] = cov / var_x
                 return out
 
-            parts = []
-            for _, g in pl.DataFrame(
-                {"ts_code": self.ts_code, "y": sy, "x": sx}
-            ).group_by("ts_code", maintain_order=True):
-                parts.append(pl.Series(_one_xy(g["y"].to_list(), g["x"].to_list())))
-            return pl.concat(parts) if parts else pl.Series([], dtype=pl.Float64)
+            return self._apply_by_code_numpy({"y": sy, "x": sx}, _fn)
 
         d = int(x) if isinstance(x, (int, float)) else 20
-        seq = list(range(1, d + 1))
-        mean_x = sum(seq) / d
-        var_x = sum((v - mean_x) ** 2 for v in seq) or 1.0
+        seq = np.arange(1, d + 1, dtype=np.float64)
+        mean_x = float(seq.mean())
+        var_x = float(np.sum((seq - mean_x) ** 2)) or 1.0
 
-        def _one(arr: list[float | None]) -> list[float | None]:
-            out: list[float | None] = [None] * len(arr)
-            for i in range(d - 1, len(arr)):
-                window = arr[i - d + 1 : i + 1]
-                if any(v is None or (isinstance(v, float) and math.isnan(v)) for v in window):
+        def _fn_seq(*, x: "np.ndarray") -> "np.ndarray":
+            n = len(x)
+            out = np.full(n, np.nan, dtype=np.float64)
+            for i in range(d - 1, n):
+                window = x[i - d + 1 : i + 1].astype(float, copy=False)
+                if not np.isfinite(window).all():
                     continue
-                mean_y = sum(float(v) for v in window) / d
-                cov = sum((seq[j] - mean_x) * (float(window[j]) - mean_y) for j in range(d))
+                mean_y = float(window.mean())
+                cov = float(np.sum((seq - mean_x) * (window - mean_y)))
                 out[i] = cov / var_x
             return out
 
-        parts = []
-        for _, g in pl.DataFrame({"ts_code": self.ts_code, "x": sy}).group_by(
-            "ts_code", maintain_order=True
-        ):
-            parts.append(pl.Series(_one(g["x"].to_list())))
-        return pl.concat(parts) if parts else pl.Series([], dtype=pl.Float64)
+        return self._apply_by_code_numpy({"x": sy}, _fn_seq)
 
     def PROD(self, x: Any, d: int) -> pl.Series:
         s = _as_series(x, self.ts_code)

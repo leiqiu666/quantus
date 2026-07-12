@@ -9,7 +9,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from src.api.routers.admin import data_source, etl_sse, financial, kline, quant, scheduler, stock, tdx_quant
+from src.api.routers.admin import data_source, etl_sse, financial, kline, quant, research, scheduler, stock, tdx_quant
 from src.api.services import scheduler_service, tdx_quant_service
 
 
@@ -39,6 +39,7 @@ app.include_router(etl_sse.router, prefix="/api/admin")
 app.include_router(stock.router, prefix="/api/admin")
 app.include_router(tdx_quant.router, prefix="/api/admin")
 app.include_router(quant.router, prefix="/api/admin")
+app.include_router(research.router, prefix="/api/admin")
 app.include_router(scheduler.router, prefix="/api/admin")
 
 

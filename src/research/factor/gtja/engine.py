@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import math
+import os
 import re
 from pathlib import Path
 
@@ -10,8 +11,13 @@ import polars as pl
 
 from src.common.setting import settings
 from src.research.dataset.kline import KlineDataset
-from src.research.factor.gtja.catalog import GtjaAlphaSpec, list_computable_alphas, load_catalog
+from src.research.factor.gtja.catalog import GtjaAlphaSpec, list_computable_alphas
 from src.research.factor.gtja.ops import OpsContext
+from src.research.factor.gtja.parallel import (
+    panel_temp_path,
+    resolve_parallelism,
+    run_alpha_shards,
+)
 from src.research.factor.load import FactorParquetLoad
 
 BENCHMARK_CODE = "000300.SH"
@@ -396,37 +402,17 @@ class Gtja191Engine:
             return ops.const(1.0 if val else 0.0)
         return None
 
-    def compute_month(
+    def _eval_and_write_specs(
         self,
+        panel: pl.DataFrame,
         year_month: str,
-        alphas: list[GtjaAlphaSpec] | None = None,
-        *,
-        force: bool = False,
-    ) -> dict[str, int]:
-        specs = alphas if alphas is not None else list_computable_alphas()
-        if not specs:
-            return {}
-
-        to_run: list[GtjaAlphaSpec] = []
-        for s in specs:
-            if s.skip_compute:
-                continue
-            if not force and year_month in self._load.list_existing_months(s.name):
-                continue
-            to_run.append(s)
-        if not to_run:
-            return {}
-
-        panel = self._load_panel(year_month)
+        specs: list[GtjaAlphaSpec],
+    ) -> tuple[dict[str, int], list[str]]:
+        """对给定面板求值并写分区；供串行与 worker 复用。"""
         ym_start, ym_end = year_month + "01", year_month + "31"
         results: dict[str, int] = {}
         failed: list[str] = []
-
-        # SELF 递推：若含 143，先占位
-        if any(s.n == 143 for s in to_run):
-            panel = panel.with_columns(pl.lit(0.0).alias("SELF"))
-
-        for spec in to_run:
+        for spec in specs:
             series = self._eval_alpha(panel, spec)
             if series is None or series.len() != panel.height:
                 failed.append(spec.name)
@@ -443,10 +429,89 @@ class Gtja191Engine:
             n = self._load.write_month_partition(out.to_arrow(), spec.name, year_month)
             results[spec.name] = n
             if spec.n == 143:
-                # 更新 SELF 供同月后续（通常只算一次）
                 panel = panel.with_columns(series.alias("SELF"))
+        return results, failed
+
+    def compute_month(
+        self,
+        year_month: str,
+        alphas: list[GtjaAlphaSpec] | None = None,
+        *,
+        force: bool = False,
+        workers: int | None = None,
+    ) -> dict[str, int]:
+        specs = alphas if alphas is not None else list_computable_alphas()
+        if not specs:
+            return {}
+
+        to_run: list[GtjaAlphaSpec] = []
+        for s in specs:
+            if s.skip_compute:
+                continue
+            if not force and year_month in self._load.list_existing_months(s.name):
+                continue
+            to_run.append(s)
+        if not to_run:
+            return {}
+
+        panel = self._load_panel(year_month)
+        self_specs = [s for s in to_run if s.n == 143]
+        parallel_specs = [s for s in to_run if s.n != 143]
+
+        results: dict[str, int] = {}
+        failed: list[str] = []
+
+        n_par = len(parallel_specs)
+        w, polars_threads = resolve_parallelism(n_par, workers)
+        print(
+            f"  [{year_month}] to_run={len(to_run)} parallel={n_par} "
+            f"workers={w} polars_threads={polars_threads}"
+        )
+
+        if n_par == 0:
+            pass
+        elif w <= 1 or n_par <= 1:
+            prev = os.environ.get("POLARS_MAX_THREADS")
+            os.environ["POLARS_MAX_THREADS"] = str(polars_threads)
+            try:
+                r, f = self._eval_and_write_specs(panel, year_month, parallel_specs)
+            finally:
+                if prev is None:
+                    os.environ.pop("POLARS_MAX_THREADS", None)
+                else:
+                    os.environ["POLARS_MAX_THREADS"] = prev
+            results.update(r)
+            failed.extend(f)
+        else:
+            tmp = panel_temp_path(self._root, year_month)
+            try:
+                panel.write_parquet(tmp)
+                r, f = run_alpha_shards(
+                    panel_path=str(tmp),
+                    year_month=year_month,
+                    alpha_ids=[s.n for s in parallel_specs],
+                    warehouse_root=str(self._root),
+                    workers=w,
+                    polars_threads=polars_threads,
+                )
+                results.update(r)
+                failed.extend(f)
+            finally:
+                try:
+                    tmp.unlink(missing_ok=True)
+                except OSError:
+                    pass
+
+        if self_specs:
+            if "SELF" not in panel.columns:
+                panel = panel.with_columns(pl.lit(0.0).alias("SELF"))
+            r, f = self._eval_and_write_specs(panel, year_month, self_specs)
+            results.update(r)
+            failed.extend(f)
 
         if failed:
-            print(f"  [{year_month}] 跳过/失败 {len(failed)} 个: {', '.join(failed[:12])}"
-                  + ("..." if len(failed) > 12 else ""))
+            print(
+                f"  [{year_month}] 跳过/失败 {len(failed)} 个: {', '.join(failed[:12])}"
+                + ("..." if len(failed) > 12 else "")
+            )
         return results

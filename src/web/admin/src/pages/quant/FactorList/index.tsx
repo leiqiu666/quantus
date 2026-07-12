@@ -6,6 +6,9 @@ import dayjs, { type Dayjs } from 'dayjs';
 import { getFactorList } from '@/services/quant';
 import type { FactorMetaItem } from '@/types/quant';
 import { useSseTask } from '@/components/SseTask';
+import StartBacktestModal, {
+  type BacktestTarget,
+} from '@/components/quant/StartBacktestModal';
 
 const { Title, Text } = Typography;
 const { RangePicker } = DatePicker;
@@ -24,61 +27,6 @@ const categoryEnum: Record<string, { text: string }> = {
   gtja191: { text: '国泰191' },
 };
 
-const columns: ProColumns<FactorMetaItem>[] = [
-  {
-    title: '因子名称',
-    dataIndex: 'factor_name',
-    width: 180,
-    search: false,
-    fixed: 'left',
-  },
-  {
-    title: '中文名',
-    dataIndex: 'display_name',
-    width: 200,
-    search: false,
-    ellipsis: true,
-  },
-  {
-    title: '来源',
-    dataIndex: 'source',
-    width: 100,
-    valueEnum: sourceEnum,
-  },
-  {
-    title: '分类',
-    dataIndex: 'category',
-    width: 100,
-    valueEnum: categoryEnum,
-  },
-  {
-    title: '算法',
-    dataIndex: 'formula',
-    width: 280,
-    search: false,
-    ellipsis: true,
-  },
-  {
-    title: '起始日',
-    dataIndex: 'start_date',
-    width: 110,
-    search: false,
-  },
-  {
-    title: '截止日',
-    dataIndex: 'end_date',
-    width: 110,
-    search: false,
-  },
-  {
-    title: '月份数',
-    dataIndex: 'month_count',
-    width: 90,
-    search: false,
-    sorter: (a, b) => (a.month_count ?? 0) - (b.month_count ?? 0),
-  },
-];
-
 export default function FactorList() {
   const { startEtlTask, guardEtlTask } = useSseTask();
   const defaultRange = useMemo((): [Dayjs, Dayjs] => {
@@ -87,6 +35,8 @@ export default function FactorList() {
     return [start, end];
   }, []);
   const [range, setRange] = useState<[Dayjs, Dayjs]>(defaultRange);
+  const [btOpen, setBtOpen] = useState(false);
+  const [btTarget, setBtTarget] = useState<BacktestTarget | null>(null);
 
   const onComputeGtja = () => {
     const startDate = range[0].startOf('month').format('YYYYMMDD');
@@ -104,6 +54,87 @@ export default function FactorList() {
       message.success('已提交国泰191计算任务');
     }
   };
+
+  const columns: ProColumns<FactorMetaItem>[] = [
+    {
+      title: '因子名称',
+      dataIndex: 'factor_name',
+      width: 180,
+      search: false,
+      fixed: 'left',
+    },
+    {
+      title: '中文名',
+      dataIndex: 'display_name',
+      width: 200,
+      search: false,
+      ellipsis: true,
+    },
+    {
+      title: '来源',
+      dataIndex: 'source',
+      width: 100,
+      valueEnum: sourceEnum,
+    },
+    {
+      title: '分类',
+      dataIndex: 'category',
+      width: 100,
+      valueEnum: categoryEnum,
+    },
+    {
+      title: '算法',
+      dataIndex: 'formula',
+      width: 280,
+      search: false,
+      ellipsis: true,
+    },
+    {
+      title: '起始日',
+      dataIndex: 'start_date',
+      width: 110,
+      search: false,
+    },
+    {
+      title: '截止日',
+      dataIndex: 'end_date',
+      width: 110,
+      search: false,
+    },
+    {
+      title: '月份数',
+      dataIndex: 'month_count',
+      width: 90,
+      search: false,
+      sorter: (a, b) => (a.month_count ?? 0) - (b.month_count ?? 0),
+    },
+    {
+      title: '操作',
+      width: 90,
+      search: false,
+      fixed: 'right',
+      render: (_, row) =>
+        row.start_date && row.end_date ? (
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              setBtTarget({
+                mode: 'single',
+                factorName: row.factor_name,
+                coverStart: row.start_date,
+                coverEnd: row.end_date,
+              });
+              setBtOpen(true);
+            }}
+          >
+            回测
+          </Button>
+        ) : (
+          '-'
+        ),
+    },
+  ];
 
   return (
     <>
@@ -139,6 +170,14 @@ export default function FactorList() {
         scroll={{ x: 1200 }}
         search={{ labelWidth: 80 }}
         options={{ density: true, reload: true }}
+      />
+      <StartBacktestModal
+        open={btOpen}
+        target={btTarget}
+        onClose={() => {
+          setBtOpen(false);
+          setBtTarget(null);
+        }}
       />
     </>
   );

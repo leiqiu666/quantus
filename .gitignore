@@ -27,6 +27,7 @@ htmlcov/
 # ==================== 前端 (src/web/**) ====================
 # 依赖与构建产物（admin 用 pnpm；子目录自带 .gitignore 时此处作兜底）
 **/node_modules/
+.pnpm-store/
 **/dist/
 **/dist-ssr/
 **/.vite/

@@ -20,6 +20,18 @@ export interface SseTaskStep {
 
 export type SseTaskFlashState = 'none' | 'success' | 'error';
 
+/** 回测 SSE 附加参数（task_key=backtest_run） */
+export interface BacktestSseParams {
+  backtestMode: 'single' | 'combo';
+  factorName?: string;
+  comboId?: number;
+  groups?: number;
+  rebalance?: string;
+  commissionRate?: number;
+  stampDutyRate?: number;
+  slippageRate?: number;
+}
+
 export interface SseTask {
   id: string;
   name: string;
@@ -44,6 +56,7 @@ export interface SseTask {
   sequenceStepErrors?: { label: string; message: string }[];
   flashState: SseTaskFlashState;
   slidingOut: boolean;
+  backtest?: BacktestSseParams;
 }
 
 interface SseTaskState {
@@ -68,6 +81,7 @@ function baseTaskFields(
     jobKey?: string;
     startDate: string;
     endDate?: string;
+    backtest?: BacktestSseParams;
   },
   ui: { expanded: boolean; minimized: boolean },
 ): SseTask {
@@ -79,6 +93,7 @@ function baseTaskFields(
     jobKey: payload.jobKey,
     startDate: payload.startDate,
     endDate: payload.endDate,
+    backtest: payload.backtest,
     status: 'queued',
     progress: 0,
     total: 0,
@@ -104,6 +119,7 @@ const sseTaskSlice = createSlice({
         jobKey?: string;
         startDate: string;
         endDate?: string;
+        backtest?: BacktestSseParams;
       }>,
     ) {
       state.tasks.forEach((t) => {

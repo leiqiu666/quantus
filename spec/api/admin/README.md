@@ -13,6 +13,10 @@
 | [股票-列表查询](./股票-列表查询.sdd.md) | GET | `/api/admin/stock/list` | JSON |
 | [通达信-tq代理](./通达信-tq代理.sdd.md) | GET / POST | `/api/admin/tdx/{functions\|{function_name}}` | JSON |
 | [因子-因子列表](./因子-因子列表.sdd.md) | GET | `/api/admin/quant/factor/list` | JSON |
+| [回测-运行与结果](./回测-运行与结果.sdd.md) | POST SSE / GET | `/api/admin/etl/sse/run`（`backtest_run`）；`/api/admin/quant/backtest/runs` | SSE / JSON |
+| [回测-因子组合](./回测-因子组合.sdd.md) | GET/POST/PUT/DELETE | `/api/admin/quant/factor-combo` | JSON |
+| [回测-明细表](./回测-明细表.sdd.md) | GET | `/api/admin/quant/backtest/runs/{run_id}/tables` | JSON |
+| [投研-因子截面与个股K线](./投研-因子截面与个股K线.sdd.md) | GET | `/api/admin/research/*` | JSON |
 | [数据质量-看板](./数据质量-看板.sdd.md) | GET / POST | `/api/admin/data-source/{groups\|dashboard}` | JSON |
 | [数据质量-总览](./数据质量-总览.sdd.md) | GET | `/api/admin/data-source/overview` | JSON |
 | [ETL-补位-SSE](./ETL-补位-SSE.sdd.md) | POST | `/api/admin/etl/sse/run` | **SSE** |

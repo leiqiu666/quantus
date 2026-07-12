@@ -4,6 +4,7 @@ import {
   DatabaseOutlined,
   StockOutlined,
   ClockCircleOutlined,
+  LineChartOutlined,
 } from '@ant-design/icons';
 import { Navigate } from 'react-router-dom';
 import type { RouteConfig } from '@/types/route';
@@ -12,6 +13,12 @@ import Demo1 from '@/pages/demo/Demo1';
 import Demo2 from '@/pages/demo/Demo2';
 import NotFound from '@/pages/NotFound';
 import FactorList from '@/pages/quant/FactorList';
+import FactorComboPage from '@/pages/quant/FactorCombo';
+import BacktestPage from '@/pages/quant/Backtest';
+import FactorCsPage from '@/pages/research/FactorCs';
+import StockKlinePage from '@/pages/research/StockKline';
+import BacktestTradesPage from '@/pages/research/BacktestTrades';
+import QuotePage from '@/pages/research/Quote';
 import FinancialReportPeriodPage from '@/pages/dataSource/FinancialReportPeriodPage';
 import OverviewPage from '@/pages/dataSource/OverviewPage';
 import FinancialAnnDatePage from '@/pages/dataSource/FinancialAnnDatePage';
@@ -148,13 +155,50 @@ export const routesConfig: RouteConfig[] = [
   },
   {
     path: '/quant',
-    name: '量化交易',
+    name: '回测管理',
     icon: <StockOutlined />,
     children: [
       {
         path: '/quant/factor-list',
         name: '因子管理',
         element: <FactorList />,
+      },
+      {
+        path: '/quant/factor-combo',
+        name: '因子组合',
+        element: <FactorComboPage />,
+      },
+      {
+        path: '/quant/backtest',
+        name: '回测',
+        element: <BacktestPage />,
+      },
+    ],
+  },
+  {
+    path: '/research',
+    name: '投研分析',
+    icon: <LineChartOutlined />,
+    children: [
+      {
+        path: '/research/factor-cs',
+        name: '因子截面',
+        element: <FactorCsPage />,
+      },
+      {
+        path: '/research/stock-kline',
+        name: '个股K线',
+        element: <StockKlinePage />,
+      },
+      {
+        path: '/research/backtest-trades',
+        name: '回测明细',
+        element: <BacktestTradesPage />,
+      },
+      {
+        path: '/research/quote',
+        name: '行情快照',
+        element: <QuotePage />,
       },
     ],
   },
