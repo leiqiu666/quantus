@@ -1,0 +1,78 @@
+# Admin 量化数据源「大类 + 日期维度」单一事实源
+# 新增 Tushare 数据源时 Step 1 必须先选 group_id，贯穿 ETL / 完整性 / 看板 / SSE
+
+groups:
+  financial_report_period:
+    title: 财务类 / 报告期
+    date_key_type: report_period
+    date_label: 报告期
+    domain_dir: financial
+    detail_path: /data-source/financial/period
+    start_default_env: financial_report
+    typical_pull_modes: [by-period, by-code]
+
+  financial_ann_date:
+    title: 财务类 / 公告日
+    date_key_type: ann_date
+    date_label: 公告日
+    domain_dir: financial
+    detail_path: /data-source/financial/ann-date
+    start_default_env: financial_stock_holder
+    typical_pull_modes: [by-date, by-code]
+
+  kline_trade_date:
+    title: K线类 / 交易日
+    date_key_type: trade_date
+    date_label: 交易日
+    domain_dir: kline
+    detail_path: /data-source/kline/trade-date
+    start_default_env: kline_daily
+    typical_pull_modes: [by-date]
+
+  market_trade_date:
+    title: 市场类 / 交易日
+    date_key_type: trade_date
+    date_label: 交易日
+    domain_dir: market
+    detail_path: /data-source/market/trade-date
+    start_default_env: market_daily_basic
+    typical_pull_modes: [by-date]
+
+  index_month:
+    title: 指数类 / 月
+    date_key_type: month
+    date_label: 月份
+    domain_dir: index
+    detail_path: /data-source/index/month
+    start_default_env: index_weight
+    typical_pull_modes: [by-date, snapshot]
+
+  index_trade_date:
+    title: 指数类 / 交易日
+    date_key_type: trade_date
+    date_label: 交易日
+    domain_dir: index
+    detail_path: /data-source/index/trade-date
+    start_default_env: index_daily
+    typical_pull_modes: [by-code]
+
+  stock_basic_trade_date:
+    title: 基础类 / 交易日
+    date_key_type: trade_date
+    date_label: 交易日
+    domain_dir: stock
+    detail_path: /data-source/stock/trade-date
+    start_default_env: stock_suspend
+    typical_pull_modes: [by-date, snapshot]
+
+# 拉取模式 → Strategy 编排（与 CLAUDE.md §3.5 一致）
+pull_mode_strategy:
+  by-date: 按 SSE 开市日循环；ensure_trade_cal；CompletenessEngine.backfill_keys
+  by-period: 按报告期 generate；B 股排除见 CLAUDE §6
+  snapshot: 全量一次；通常不做完整性
+  by-code: 逐股；event_driven 完整性
+
+# SSE task_key 命名约定
+sse_task_key:
+  check_complete: "{source_name}_check"
+  pull_only: "{source_name}_pull"

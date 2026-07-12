@@ -1,0 +1,1898 @@
+{
+  "162": {
+    "title": "财报披露计划",
+    "api_name": "disclosure_date",
+    "filename": "162_disclosure_date.md",
+    "doc_id": 162,
+    "url": "https://tushare.pro/document/2?doc_id=162",
+    "updated_at": "2026-06-20 03:50:57"
+  },
+  "259": {
+    "title": "概念和行业指数",
+    "api_name": "ths_index",
+    "filename": "259_ths_index.md",
+    "doc_id": 259,
+    "url": "https://tushare.pro/document/2?doc_id=259",
+    "updated_at": "2026-06-20 03:51:18"
+  },
+  "25": {
+    "title": "股票基础信息",
+    "api_name": "stock_basic",
+    "filename": "25_stock_basic.md",
+    "doc_id": 25,
+    "url": "https://tushare.pro/document/2?doc_id=25",
+    "updated_at": "2026-06-20 03:56:57"
+  },
+  "329": {
+    "title": "股本情况（盘前）",
+    "api_name": "stk_premarket",
+    "filename": "329_stk_premarket.md",
+    "doc_id": 329,
+    "url": "https://tushare.pro/document/2?doc_id=329",
+    "updated_at": "2026-06-20 03:55:35"
+  },
+  "26": {
+    "title": "交易日历",
+    "api_name": "trade_cal",
+    "filename": "26_trade_cal.md",
+    "doc_id": 26,
+    "url": "https://tushare.pro/document/2?doc_id=26",
+    "updated_at": "2026-06-20 04:11:38"
+  },
+  "397": {
+    "title": "ST股票列表",
+    "api_name": "stock_st",
+    "filename": "397_stock_st.md",
+    "doc_id": 397,
+    "url": "https://tushare.pro/document/2?doc_id=397",
+    "updated_at": "2026-06-20 04:11:51"
+  },
+  "423": {
+    "title": "ST风险警示板股票",
+    "api_name": "st",
+    "filename": "423_st.md",
+    "doc_id": 423,
+    "url": "https://tushare.pro/document/2?doc_id=423",
+    "updated_at": "2026-06-20 03:55:47"
+  },
+  "398": {
+    "title": "沪深港通股票列表",
+    "api_name": "stock_hsgt",
+    "filename": "398_stock_hsgt.md",
+    "doc_id": 398,
+    "url": "https://tushare.pro/document/2?doc_id=398",
+    "updated_at": "2026-06-20 04:11:57"
+  },
+  "100": {
+    "title": "股票曾用名",
+    "api_name": "namechange",
+    "filename": "100_namechange.md",
+    "doc_id": 100,
+    "url": "https://tushare.pro/document/2?doc_id=100",
+    "updated_at": "2026-06-20 03:55:56"
+  },
+  "112": {
+    "title": "上市公司基本信息",
+    "api_name": "stock_company",
+    "filename": "112_stock_company.md",
+    "doc_id": 112,
+    "url": "https://tushare.pro/document/2?doc_id=112",
+    "updated_at": "2026-06-20 04:11:45"
+  },
+  "193": {
+    "title": "上市公司管理层",
+    "api_name": "stk_managers",
+    "filename": "193_stk_managers.md",
+    "doc_id": 193,
+    "url": "https://tushare.pro/document/2?doc_id=193",
+    "updated_at": "2026-06-20 03:56:04"
+  },
+  "194": {
+    "title": "管理层薪酬和持股",
+    "api_name": "stk_rewards",
+    "filename": "194_stk_rewards.md",
+    "doc_id": 194,
+    "url": "https://tushare.pro/document/2?doc_id=194",
+    "updated_at": "2026-06-20 03:56:09"
+  },
+  "375": {
+    "title": "北交所新旧代码对照表",
+    "api_name": "bse_mapping",
+    "filename": "375_bse_mapping.md",
+    "doc_id": 375,
+    "url": "https://tushare.pro/document/2?doc_id=375",
+    "updated_at": "2026-06-20 04:16:42"
+  },
+  "123": {
+    "title": "IPO新股列表",
+    "api_name": "new_share",
+    "filename": "123_new_share.md",
+    "doc_id": 123,
+    "url": "https://tushare.pro/document/2?doc_id=123",
+    "updated_at": "2026-06-20 04:16:46"
+  },
+  "262": {
+    "title": "股票历史列表（历史每天股票列表）",
+    "api_name": "bak_basic",
+    "filename": "262_bak_basic.md",
+    "doc_id": 262,
+    "url": "https://tushare.pro/document/2?doc_id=262",
+    "updated_at": "2026-06-20 04:16:51"
+  },
+  "27": {
+    "title": "A股日线行情",
+    "api_name": "daily",
+    "filename": "27_daily.md",
+    "doc_id": 27,
+    "url": "https://tushare.pro/document/2?doc_id=27",
+    "updated_at": "2026-06-20 04:16:55"
+  },
+  "372": {
+    "title": "A股实时日线",
+    "api_name": "rt_k",
+    "filename": "372_rt_k.md",
+    "doc_id": 372,
+    "url": "https://tushare.pro/document/2?doc_id=372",
+    "updated_at": "2026-06-20 04:16:59"
+  },
+  "370": {
+    "title": "股票历史分钟行情",
+    "api_name": "stk_mins",
+    "filename": "370_stk_mins.md",
+    "doc_id": 370,
+    "url": "https://tushare.pro/document/2?doc_id=370",
+    "updated_at": "2026-06-20 04:17:03"
+  },
+  "374": {
+    "title": "A股实时分钟",
+    "api_name": "rt_min",
+    "filename": "374_rt_min.md",
+    "doc_id": 374,
+    "url": "https://tushare.pro/document/2?doc_id=374",
+    "updated_at": "2026-06-20 04:17:08"
+  },
+  "457": {
+    "title": "A股实时分钟-日累计",
+    "api_name": "rt_min_daily",
+    "filename": "457_rt_min_daily.md",
+    "doc_id": 457,
+    "url": "https://tushare.pro/document/2?doc_id=457",
+    "updated_at": "2026-06-20 04:17:12"
+  },
+  "144": {
+    "title": "周线行情",
+    "api_name": "weekly",
+    "filename": "144_weekly.md",
+    "doc_id": 144,
+    "url": "https://tushare.pro/document/2?doc_id=144",
+    "updated_at": "2026-06-20 04:17:16"
+  },
+  "145": {
+    "title": "月线行情",
+    "api_name": "monthly",
+    "filename": "145_monthly.md",
+    "doc_id": 145,
+    "url": "https://tushare.pro/document/2?doc_id=145",
+    "updated_at": "2026-06-20 04:17:20"
+  },
+  "146": {
+    "title": "A股复权行情",
+    "api_name": "",
+    "filename": "146_A股复权行情.md",
+    "doc_id": 146,
+    "url": "https://tushare.pro/document/2?doc_id=146",
+    "updated_at": "2026-06-20 04:17:25"
+  },
+  "336": {
+    "title": "股票周/月线行情(每日更新)",
+    "api_name": "stk_weekly_monthly",
+    "filename": "336_stk_weekly_monthly.md",
+    "doc_id": 336,
+    "url": "https://tushare.pro/document/2?doc_id=336",
+    "updated_at": "2026-06-20 04:17:29"
+  },
+  "365": {
+    "title": "股票周/月线行情(复权--每日更新)",
+    "api_name": "stk_week_month_adj",
+    "filename": "365_stk_week_month_adj.md",
+    "doc_id": 365,
+    "url": "https://tushare.pro/document/2?doc_id=365",
+    "updated_at": "2026-06-20 04:17:33"
+  },
+  "28": {
+    "title": "复权因子",
+    "api_name": "adj_factor",
+    "filename": "28_adj_factor.md",
+    "doc_id": 28,
+    "url": "https://tushare.pro/document/2?doc_id=28",
+    "updated_at": "2026-06-20 04:17:37"
+  },
+  "32": {
+    "title": "每日指标",
+    "api_name": "daily_basic",
+    "filename": "32_daily_basic.md",
+    "doc_id": 32,
+    "url": "https://tushare.pro/document/2?doc_id=32",
+    "updated_at": "2026-06-20 04:17:41"
+  },
+  "109": {
+    "title": "通用行情接口",
+    "api_name": "",
+    "filename": "109_通用行情接口.md",
+    "doc_id": 109,
+    "url": "https://tushare.pro/document/2?doc_id=109",
+    "updated_at": "2026-06-20 04:17:46"
+  },
+  "183": {
+    "title": "每日涨跌停价格",
+    "api_name": "stk_limit",
+    "filename": "183_stk_limit.md",
+    "doc_id": 183,
+    "url": "https://tushare.pro/document/2?doc_id=183",
+    "updated_at": "2026-06-20 04:17:50"
+  },
+  "214": {
+    "title": "每日停复牌信息",
+    "api_name": "suspend_d",
+    "filename": "214_suspend_d.md",
+    "doc_id": 214,
+    "url": "https://tushare.pro/document/2?doc_id=214",
+    "updated_at": "2026-06-20 04:17:54"
+  },
+  "48": {
+    "title": "沪深股通十大成交股",
+    "api_name": "hsgt_top10",
+    "filename": "48_hsgt_top10.md",
+    "doc_id": 48,
+    "url": "https://tushare.pro/document/2?doc_id=48",
+    "updated_at": "2026-06-20 04:17:59"
+  },
+  "49": {
+    "title": "港股通十大成交股",
+    "api_name": "ggt_top10",
+    "filename": "49_ggt_top10.md",
+    "doc_id": 49,
+    "url": "https://tushare.pro/document/2?doc_id=49",
+    "updated_at": "2026-06-20 04:18:03"
+  },
+  "196": {
+    "title": "港股通每日成交统计",
+    "api_name": "ggt_daily",
+    "filename": "196_ggt_daily.md",
+    "doc_id": 196,
+    "url": "https://tushare.pro/document/2?doc_id=196",
+    "updated_at": "2026-06-20 04:18:07"
+  },
+  "255": {
+    "title": "备用行情",
+    "api_name": "bak_daily",
+    "filename": "255_bak_daily.md",
+    "doc_id": 255,
+    "url": "https://tushare.pro/document/2?doc_id=255",
+    "updated_at": "2026-06-20 04:18:11"
+  },
+  "33": {
+    "title": "利润表",
+    "api_name": "income",
+    "filename": "33_income.md",
+    "doc_id": 33,
+    "url": "https://tushare.pro/document/2?doc_id=33",
+    "updated_at": "2026-06-20 04:18:15"
+  },
+  "36": {
+    "title": "资产负债表",
+    "api_name": "balancesheet",
+    "filename": "36_balancesheet.md",
+    "doc_id": 36,
+    "url": "https://tushare.pro/document/2?doc_id=36",
+    "updated_at": "2026-06-20 04:18:20"
+  },
+  "44": {
+    "title": "现金流量表",
+    "api_name": "cashflow",
+    "filename": "44_cashflow.md",
+    "doc_id": 44,
+    "url": "https://tushare.pro/document/2?doc_id=44",
+    "updated_at": "2026-06-20 04:18:24"
+  },
+  "45": {
+    "title": "业绩预告",
+    "api_name": "forecast",
+    "filename": "45_forecast.md",
+    "doc_id": 45,
+    "url": "https://tushare.pro/document/2?doc_id=45",
+    "updated_at": "2026-06-20 04:18:28"
+  },
+  "46": {
+    "title": "业绩快报",
+    "api_name": "express",
+    "filename": "46_express.md",
+    "doc_id": 46,
+    "url": "https://tushare.pro/document/2?doc_id=46",
+    "updated_at": "2026-06-20 04:18:32"
+  },
+  "103": {
+    "title": "分红送股",
+    "api_name": "dividend",
+    "filename": "103_dividend.md",
+    "doc_id": 103,
+    "url": "https://tushare.pro/document/2?doc_id=103",
+    "updated_at": "2026-06-20 04:18:37"
+  },
+  "79": {
+    "title": "财务指标数据",
+    "api_name": "fina_indicator",
+    "filename": "79_fina_indicator.md",
+    "doc_id": 79,
+    "url": "https://tushare.pro/document/2?doc_id=79",
+    "updated_at": "2026-06-20 04:18:41"
+  },
+  "80": {
+    "title": "财务审计意见",
+    "api_name": "fina_audit",
+    "filename": "80_fina_audit.md",
+    "doc_id": 80,
+    "url": "https://tushare.pro/document/2?doc_id=80",
+    "updated_at": "2026-06-20 04:18:45"
+  },
+  "81": {
+    "title": "主营业务构成",
+    "api_name": "fina_mainbz",
+    "filename": "81_fina_mainbz.md",
+    "doc_id": 81,
+    "url": "https://tushare.pro/document/2?doc_id=81",
+    "updated_at": "2026-06-20 04:18:50"
+  },
+  "451": {
+    "title": "个股异常波动",
+    "api_name": "stk_shock",
+    "filename": "451_stk_shock.md",
+    "doc_id": 451,
+    "url": "https://tushare.pro/document/2?doc_id=451",
+    "updated_at": "2026-06-20 04:18:54"
+  },
+  "452": {
+    "title": "个股严重异常波动",
+    "api_name": "stk_high_shock",
+    "filename": "452_stk_high_shock.md",
+    "doc_id": 452,
+    "url": "https://tushare.pro/document/2?doc_id=452",
+    "updated_at": "2026-06-20 04:18:58"
+  },
+  "453": {
+    "title": "交易所重点提示证券",
+    "api_name": "stk_alert",
+    "filename": "453_stk_alert.md",
+    "doc_id": 453,
+    "url": "https://tushare.pro/document/2?doc_id=453",
+    "updated_at": "2026-06-20 04:19:02"
+  },
+  "61": {
+    "title": "前十大股东",
+    "api_name": "top10_holders",
+    "filename": "61_top10_holders.md",
+    "doc_id": 61,
+    "url": "https://tushare.pro/document/2?doc_id=61",
+    "updated_at": "2026-06-20 04:19:07"
+  },
+  "62": {
+    "title": "前十大流通股东",
+    "api_name": "top10_floatholders",
+    "filename": "62_top10_floatholders.md",
+    "doc_id": 62,
+    "url": "https://tushare.pro/document/2?doc_id=62",
+    "updated_at": "2026-06-20 04:19:11"
+  },
+  "110": {
+    "title": "股权质押统计数据",
+    "api_name": "pledge_stat",
+    "filename": "110_pledge_stat.md",
+    "doc_id": 110,
+    "url": "https://tushare.pro/document/2?doc_id=110",
+    "updated_at": "2026-06-20 04:19:15"
+  },
+  "111": {
+    "title": "股权质押明细",
+    "api_name": "pledge_detail",
+    "filename": "111_pledge_detail.md",
+    "doc_id": 111,
+    "url": "https://tushare.pro/document/2?doc_id=111",
+    "updated_at": "2026-06-20 04:19:19"
+  },
+  "124": {
+    "title": "股票回购",
+    "api_name": "repurchase",
+    "filename": "124_repurchase.md",
+    "doc_id": 124,
+    "url": "https://tushare.pro/document/2?doc_id=124",
+    "updated_at": "2026-06-20 04:19:24"
+  },
+  "160": {
+    "title": "限售股解禁",
+    "api_name": "share_float",
+    "filename": "160_share_float.md",
+    "doc_id": 160,
+    "url": "https://tushare.pro/document/2?doc_id=160",
+    "updated_at": "2026-06-20 04:19:28"
+  },
+  "161": {
+    "title": "大宗交易",
+    "api_name": "block_trade",
+    "filename": "161_block_trade.md",
+    "doc_id": 161,
+    "url": "https://tushare.pro/document/2?doc_id=161",
+    "updated_at": "2026-06-20 04:19:32"
+  },
+  "164": {
+    "title": "股票账户开户数据",
+    "api_name": "stk_account",
+    "filename": "164_stk_account.md",
+    "doc_id": 164,
+    "url": "https://tushare.pro/document/2?doc_id=164",
+    "updated_at": "2026-06-20 04:19:36"
+  },
+  "165": {
+    "title": "股票账户开户数据（旧）",
+    "api_name": "stk_account_old",
+    "filename": "165_stk_account_old.md",
+    "doc_id": 165,
+    "url": "https://tushare.pro/document/2?doc_id=165",
+    "updated_at": "2026-06-20 04:19:41"
+  },
+  "166": {
+    "title": "股东人数",
+    "api_name": "stk_holdernumber",
+    "filename": "166_stk_holdernumber.md",
+    "doc_id": 166,
+    "url": "https://tushare.pro/document/2?doc_id=166",
+    "updated_at": "2026-06-20 04:19:45"
+  },
+  "175": {
+    "title": "股东增减持",
+    "api_name": "stk_holdertrade",
+    "filename": "175_stk_holdertrade.md",
+    "doc_id": 175,
+    "url": "https://tushare.pro/document/2?doc_id=175",
+    "updated_at": "2026-06-20 04:19:49"
+  },
+  "292": {
+    "title": "卖方盈利预测数据",
+    "api_name": "report_rc",
+    "filename": "292_report_rc.md",
+    "doc_id": 292,
+    "url": "https://tushare.pro/document/2?doc_id=292",
+    "updated_at": "2026-06-20 04:19:53"
+  },
+  "293": {
+    "title": "每日筹码及胜率",
+    "api_name": "cyq_perf",
+    "filename": "293_cyq_perf.md",
+    "doc_id": 293,
+    "url": "https://tushare.pro/document/2?doc_id=293",
+    "updated_at": "2026-06-20 04:19:58"
+  },
+  "294": {
+    "title": "每日筹码分布",
+    "api_name": "cyq_chips",
+    "filename": "294_cyq_chips.md",
+    "doc_id": 294,
+    "url": "https://tushare.pro/document/2?doc_id=294",
+    "updated_at": "2026-06-20 04:20:02"
+  },
+  "296": {
+    "title": "股票技术因子（量化因子）",
+    "api_name": "stk_factor",
+    "filename": "296_stk_factor.md",
+    "doc_id": 296,
+    "url": "https://tushare.pro/document/2?doc_id=296",
+    "updated_at": "2026-06-21 22:23:48"
+  },
+  "328": {
+    "title": "股票技术面因子(专业版)",
+    "api_name": "stk_factor_pro",
+    "filename": "328_stk_factor_pro.md",
+    "doc_id": 328,
+    "url": "https://tushare.pro/document/2?doc_id=328",
+    "updated_at": "2026-06-20 04:20:10"
+  },
+  "295": {
+    "title": "中央结算系统持股汇总",
+    "api_name": "ccass_hold",
+    "filename": "295_ccass_hold.md",
+    "doc_id": 295,
+    "url": "https://tushare.pro/document/2?doc_id=295",
+    "updated_at": "2026-06-20 04:20:15"
+  },
+  "274": {
+    "title": "中央结算系统持股明细",
+    "api_name": "ccass_hold_detail",
+    "filename": "274_ccass_hold_detail.md",
+    "doc_id": 274,
+    "url": "https://tushare.pro/document/2?doc_id=274",
+    "updated_at": "2026-06-20 04:20:19"
+  },
+  "188": {
+    "title": "沪深港股通持股明细",
+    "api_name": "hk_hold",
+    "filename": "188_hk_hold.md",
+    "doc_id": 188,
+    "url": "https://tushare.pro/document/2?doc_id=188",
+    "updated_at": "2026-06-20 04:20:23"
+  },
+  "353": {
+    "title": "股票开盘集合竞价数据",
+    "api_name": "stk_auction_o",
+    "filename": "353_stk_auction_o.md",
+    "doc_id": 353,
+    "url": "https://tushare.pro/document/2?doc_id=353",
+    "updated_at": "2026-06-20 04:20:27"
+  },
+  "354": {
+    "title": "股票收盘集合竞价数据",
+    "api_name": "stk_auction_c",
+    "filename": "354_stk_auction_c.md",
+    "doc_id": 354,
+    "url": "https://tushare.pro/document/2?doc_id=354",
+    "updated_at": "2026-06-20 04:20:32"
+  },
+  "364": {
+    "title": "神奇九转指标",
+    "api_name": "stk_nineturn",
+    "filename": "364_stk_nineturn.md",
+    "doc_id": 364,
+    "url": "https://tushare.pro/document/2?doc_id=364",
+    "updated_at": "2026-06-20 04:20:36"
+  },
+  "399": {
+    "title": "AH股比价",
+    "api_name": "stk_ah_comparison",
+    "filename": "399_stk_ah_comparison.md",
+    "doc_id": 399,
+    "url": "https://tushare.pro/document/2?doc_id=399",
+    "updated_at": "2026-06-20 04:20:40"
+  },
+  "275": {
+    "title": "机构调研表",
+    "api_name": "stk_surv",
+    "filename": "275_stk_surv.md",
+    "doc_id": 275,
+    "url": "https://tushare.pro/document/2?doc_id=275",
+    "updated_at": "2026-06-20 04:20:44"
+  },
+  "267": {
+    "title": "券商每月荐股",
+    "api_name": "broker_recommend",
+    "filename": "267_broker_recommend.md",
+    "doc_id": 267,
+    "url": "https://tushare.pro/document/2?doc_id=267",
+    "updated_at": "2026-06-20 04:20:48"
+  },
+  "58": {
+    "title": "融资融券交易汇总",
+    "api_name": "margin",
+    "filename": "58_margin.md",
+    "doc_id": 58,
+    "url": "https://tushare.pro/document/2?doc_id=58",
+    "updated_at": "2026-06-20 04:20:53"
+  },
+  "59": {
+    "title": "融资融券交易明细",
+    "api_name": "margin_detail",
+    "filename": "59_margin_detail.md",
+    "doc_id": 59,
+    "url": "https://tushare.pro/document/2?doc_id=59",
+    "updated_at": "2026-06-20 04:20:57"
+  },
+  "326": {
+    "title": "融资融券标的（盘前更新）",
+    "api_name": "margin_secs",
+    "filename": "326_margin_secs.md",
+    "doc_id": 326,
+    "url": "https://tushare.pro/document/2?doc_id=326",
+    "updated_at": "2026-06-20 04:21:01"
+  },
+  "332": {
+    "title": "转融券交易汇总",
+    "api_name": "slb_sec",
+    "filename": "332_slb_sec.md",
+    "doc_id": 332,
+    "url": "https://tushare.pro/document/2?doc_id=332",
+    "updated_at": "2026-06-20 04:21:05"
+  },
+  "331": {
+    "title": "转融资交易汇总",
+    "api_name": "slb_len",
+    "filename": "331_slb_len.md",
+    "doc_id": 331,
+    "url": "https://tushare.pro/document/2?doc_id=331",
+    "updated_at": "2026-06-20 04:21:10"
+  },
+  "333": {
+    "title": "转融券交易明细",
+    "api_name": "slb_sec_detail",
+    "filename": "333_slb_sec_detail.md",
+    "doc_id": 333,
+    "url": "https://tushare.pro/document/2?doc_id=333",
+    "updated_at": "2026-06-20 04:21:14"
+  },
+  "334": {
+    "title": "做市借券交易汇总",
+    "api_name": "slb_len_mm",
+    "filename": "334_slb_len_mm.md",
+    "doc_id": 334,
+    "url": "https://tushare.pro/document/2?doc_id=334",
+    "updated_at": "2026-06-20 04:21:18"
+  },
+  "170": {
+    "title": "个股资金流向",
+    "api_name": "moneyflow",
+    "filename": "170_moneyflow.md",
+    "doc_id": 170,
+    "url": "https://tushare.pro/document/2?doc_id=170",
+    "updated_at": "2026-06-20 04:21:22"
+  },
+  "348": {
+    "title": "个股资金流向（THS）",
+    "api_name": "moneyflow_ths",
+    "filename": "348_moneyflow_ths.md",
+    "doc_id": 348,
+    "url": "https://tushare.pro/document/2?doc_id=348",
+    "updated_at": "2026-06-20 04:21:27"
+  },
+  "349": {
+    "title": "个股资金流向（DC）",
+    "api_name": "moneyflow_dc",
+    "filename": "349_moneyflow_dc.md",
+    "doc_id": 349,
+    "url": "https://tushare.pro/document/2?doc_id=349",
+    "updated_at": "2026-06-20 04:21:31"
+  },
+  "371": {
+    "title": "同花顺概念板块资金流向（THS）",
+    "api_name": "moneyflow_cnt_ths",
+    "filename": "371_moneyflow_cnt_ths.md",
+    "doc_id": 371,
+    "url": "https://tushare.pro/document/2?doc_id=371",
+    "updated_at": "2026-06-20 04:21:35"
+  },
+  "343": {
+    "title": "同花顺行业资金流向（THS）",
+    "api_name": "moneyflow_ind_ths",
+    "filename": "343_moneyflow_ind_ths.md",
+    "doc_id": 343,
+    "url": "https://tushare.pro/document/2?doc_id=343",
+    "updated_at": "2026-06-20 04:21:39"
+  },
+  "344": {
+    "title": "东财概念及行业板块资金流向（DC）",
+    "api_name": "moneyflow_ind_dc",
+    "filename": "344_moneyflow_ind_dc.md",
+    "doc_id": 344,
+    "url": "https://tushare.pro/document/2?doc_id=344",
+    "updated_at": "2026-06-20 04:21:44"
+  },
+  "345": {
+    "title": "大盘资金流向（DC）",
+    "api_name": "moneyflow_mkt_dc",
+    "filename": "345_moneyflow_mkt_dc.md",
+    "doc_id": 345,
+    "url": "https://tushare.pro/document/2?doc_id=345",
+    "updated_at": "2026-06-20 04:21:48"
+  },
+  "47": {
+    "title": "沪深港通资金流向",
+    "api_name": "moneyflow_hsgt",
+    "filename": "47_moneyflow_hsgt.md",
+    "doc_id": 47,
+    "url": "https://tushare.pro/document/2?doc_id=47",
+    "updated_at": "2026-06-20 04:21:52"
+  },
+  "106": {
+    "title": "龙虎榜每日明细",
+    "api_name": "top_list",
+    "filename": "106_top_list.md",
+    "doc_id": 106,
+    "url": "https://tushare.pro/document/2?doc_id=106",
+    "updated_at": "2026-06-20 04:21:56"
+  },
+  "107": {
+    "title": "龙虎榜机构明细",
+    "api_name": "top_inst",
+    "filename": "107_top_inst.md",
+    "doc_id": 107,
+    "url": "https://tushare.pro/document/2?doc_id=107",
+    "updated_at": "2026-06-20 04:22:01"
+  },
+  "355": {
+    "title": "涨跌停榜单（同花顺）",
+    "api_name": "limit_list_ths",
+    "filename": "355_limit_list_ths.md",
+    "doc_id": 355,
+    "url": "https://tushare.pro/document/2?doc_id=355",
+    "updated_at": "2026-06-20 04:22:05"
+  },
+  "298": {
+    "title": "涨跌停列表（新）",
+    "api_name": "limit_list_d",
+    "filename": "298_limit_list_d.md",
+    "doc_id": 298,
+    "url": "https://tushare.pro/document/2?doc_id=298",
+    "updated_at": "2026-06-20 04:22:09"
+  },
+  "356": {
+    "title": "连板天梯",
+    "api_name": "limit_step",
+    "filename": "356_limit_step.md",
+    "doc_id": 356,
+    "url": "https://tushare.pro/document/2?doc_id=356",
+    "updated_at": "2026-06-20 04:22:13"
+  },
+  "357": {
+    "title": "最强板块统计",
+    "api_name": "limit_cpt_list",
+    "filename": "357_limit_cpt_list.md",
+    "doc_id": 357,
+    "url": "https://tushare.pro/document/2?doc_id=357",
+    "updated_at": "2026-06-20 04:22:18"
+  },
+  "260": {
+    "title": "板块指数行情",
+    "api_name": "ths_daily",
+    "filename": "260_ths_daily.md",
+    "doc_id": 260,
+    "url": "https://tushare.pro/document/2?doc_id=260",
+    "updated_at": "2026-06-20 04:22:23"
+  },
+  "261": {
+    "title": "概念板块成分",
+    "api_name": "ths_member",
+    "filename": "261_ths_member.md",
+    "doc_id": 261,
+    "url": "https://tushare.pro/document/2?doc_id=261",
+    "updated_at": "2026-06-20 04:22:27"
+  },
+  "362": {
+    "title": "概念板块",
+    "api_name": "dc_index",
+    "filename": "362_dc_index.md",
+    "doc_id": 362,
+    "url": "https://tushare.pro/document/2?doc_id=362",
+    "updated_at": "2026-06-20 04:22:31"
+  },
+  "363": {
+    "title": "板块成分",
+    "api_name": "dc_member",
+    "filename": "363_dc_member.md",
+    "doc_id": 363,
+    "url": "https://tushare.pro/document/2?doc_id=363",
+    "updated_at": "2026-06-20 04:22:35"
+  },
+  "382": {
+    "title": "概念板块行情",
+    "api_name": "dc_daily",
+    "filename": "382_dc_daily.md",
+    "doc_id": 382,
+    "url": "https://tushare.pro/document/2?doc_id=382",
+    "updated_at": "2026-06-20 04:22:40"
+  },
+  "369": {
+    "title": "当日集合竞价",
+    "api_name": "stk_auction",
+    "filename": "369_stk_auction.md",
+    "doc_id": 369,
+    "url": "https://tushare.pro/document/2?doc_id=369",
+    "updated_at": "2026-06-20 04:22:44"
+  },
+  "311": {
+    "title": "游资名录",
+    "api_name": "hm_list",
+    "filename": "311_hm_list.md",
+    "doc_id": 311,
+    "url": "https://tushare.pro/document/2?doc_id=311",
+    "updated_at": "2026-06-20 04:22:48"
+  },
+  "312": {
+    "title": "游资每日明细",
+    "api_name": "hm_detail",
+    "filename": "312_hm_detail.md",
+    "doc_id": 312,
+    "url": "https://tushare.pro/document/2?doc_id=312",
+    "updated_at": "2026-06-20 04:22:52"
+  },
+  "320": {
+    "title": "THS热榜",
+    "api_name": "ths_hot",
+    "filename": "320_ths_hot.md",
+    "doc_id": 320,
+    "url": "https://tushare.pro/document/2?doc_id=320",
+    "updated_at": "2026-06-20 04:22:57"
+  },
+  "321": {
+    "title": "DC热榜",
+    "api_name": "dc_hot",
+    "filename": "321_dc_hot.md",
+    "doc_id": 321,
+    "url": "https://tushare.pro/document/2?doc_id=321",
+    "updated_at": "2026-06-20 04:23:01"
+  },
+  "376": {
+    "title": "TDX板块信息",
+    "api_name": "tdx_index",
+    "filename": "376_tdx_index.md",
+    "doc_id": 376,
+    "url": "https://tushare.pro/document/2?doc_id=376",
+    "updated_at": "2026-06-20 04:23:05"
+  },
+  "377": {
+    "title": "TDX板块成分",
+    "api_name": "tdx_member",
+    "filename": "377_tdx_member.md",
+    "doc_id": 377,
+    "url": "https://tushare.pro/document/2?doc_id=377",
+    "updated_at": "2026-06-20 04:23:10"
+  },
+  "378": {
+    "title": "TDX板块行情",
+    "api_name": "tdx_daily",
+    "filename": "378_tdx_daily.md",
+    "doc_id": 378,
+    "url": "https://tushare.pro/document/2?doc_id=378",
+    "updated_at": "2026-06-20 04:23:14"
+  },
+  "347": {
+    "title": "开盘啦榜单数据",
+    "api_name": "kpl_list",
+    "filename": "347_kpl_list.md",
+    "doc_id": 347,
+    "url": "https://tushare.pro/document/2?doc_id=347",
+    "updated_at": "2026-06-20 04:23:18"
+  },
+  "351": {
+    "title": "开盘啦题材成分",
+    "api_name": "kpl_concept_cons",
+    "filename": "351_kpl_concept_cons.md",
+    "doc_id": 351,
+    "url": "https://tushare.pro/document/2?doc_id=351",
+    "updated_at": "2026-06-20 04:23:22"
+  },
+  "421": {
+    "title": "题材数据（DC）",
+    "api_name": "dc_concept",
+    "filename": "421_dc_concept.md",
+    "doc_id": 421,
+    "url": "https://tushare.pro/document/2?doc_id=421",
+    "updated_at": "2026-06-20 04:23:27"
+  },
+  "422": {
+    "title": "题材成分（DC）",
+    "api_name": "dc_concept_cons",
+    "filename": "422_dc_concept_cons.md",
+    "doc_id": 422,
+    "url": "https://tushare.pro/document/2?doc_id=422",
+    "updated_at": "2026-06-20 04:23:31"
+  },
+  "385": {
+    "title": "ETF基础信息",
+    "api_name": "etf_basic",
+    "filename": "385_etf_basic.md",
+    "doc_id": 385,
+    "url": "https://tushare.pro/document/2?doc_id=385",
+    "updated_at": "2026-06-20 04:23:35"
+  },
+  "386": {
+    "title": "ETF基准指数列表",
+    "api_name": "etf_index",
+    "filename": "386_etf_index.md",
+    "doc_id": 386,
+    "url": "https://tushare.pro/document/2?doc_id=386",
+    "updated_at": "2026-06-20 04:23:39"
+  },
+  "416": {
+    "title": "ETF实时分钟",
+    "api_name": "rt_etf_min",
+    "filename": "416_rt_etf_min.md",
+    "doc_id": 416,
+    "url": "https://tushare.pro/document/2?doc_id=416",
+    "updated_at": "2026-06-20 04:23:44"
+  },
+  "470": {
+    "title": "ETF实时分钟-日累计",
+    "api_name": "rt_etf_min_daily",
+    "filename": "470_rt_etf_min_daily.md",
+    "doc_id": 470,
+    "url": "https://tushare.pro/document/2?doc_id=470",
+    "updated_at": "2026-06-20 04:23:48"
+  },
+  "387": {
+    "title": "ETF历史分钟行情",
+    "api_name": "etf_mins",
+    "filename": "387_etf_mins.md",
+    "doc_id": 387,
+    "url": "https://tushare.pro/document/2?doc_id=387",
+    "updated_at": "2026-06-20 04:23:52"
+  },
+  "400": {
+    "title": "ETF实时日线",
+    "api_name": "rt_etf_k",
+    "filename": "400_rt_etf_k.md",
+    "doc_id": 400,
+    "url": "https://tushare.pro/document/2?doc_id=400",
+    "updated_at": "2026-06-20 04:23:56"
+  },
+  "127": {
+    "title": "ETF日线行情",
+    "api_name": "fund_daily",
+    "filename": "127_fund_daily.md",
+    "doc_id": 127,
+    "url": "https://tushare.pro/document/2?doc_id=127",
+    "updated_at": "2026-06-20 04:24:01"
+  },
+  "199": {
+    "title": "基金复权因子",
+    "api_name": "fund_adj",
+    "filename": "199_fund_adj.md",
+    "doc_id": 199,
+    "url": "https://tushare.pro/document/2?doc_id=199",
+    "updated_at": "2026-06-20 04:24:05"
+  },
+  "408": {
+    "title": "ETF份额规模",
+    "api_name": "etf_share_size",
+    "filename": "408_etf_share_size.md",
+    "doc_id": 408,
+    "url": "https://tushare.pro/document/2?doc_id=408",
+    "updated_at": "2026-06-20 04:24:09"
+  },
+  "471": {
+    "title": "每日持仓组合(沪市）",
+    "api_name": "etf_sh_cons",
+    "filename": "471_etf_sh_cons.md",
+    "doc_id": 471,
+    "url": "https://tushare.pro/document/2?doc_id=471",
+    "updated_at": "2026-06-20 04:24:13"
+  },
+  "454": {
+    "title": "ETF实时参考",
+    "api_name": "rt_etf_sz_iopv",
+    "filename": "454_rt_etf_sz_iopv.md",
+    "doc_id": 454,
+    "url": "https://tushare.pro/document/2?doc_id=454",
+    "updated_at": "2026-06-20 04:24:18"
+  },
+  "460": {
+    "title": "指数公司公告",
+    "api_name": "idx_anns",
+    "filename": "460_idx_anns.md",
+    "doc_id": 460,
+    "url": "https://tushare.pro/document/2?doc_id=460",
+    "updated_at": "2026-06-20 04:24:22"
+  },
+  "94": {
+    "title": "指数基本信息",
+    "api_name": "index_basic",
+    "filename": "94_index_basic.md",
+    "doc_id": 94,
+    "url": "https://tushare.pro/document/2?doc_id=94",
+    "updated_at": "2026-06-20 04:24:26"
+  },
+  "95": {
+    "title": "指数日线行情",
+    "api_name": "index_daily",
+    "filename": "95_index_daily.md",
+    "doc_id": 95,
+    "url": "https://tushare.pro/document/2?doc_id=95",
+    "updated_at": "2026-06-20 04:24:30"
+  },
+  "403": {
+    "title": "指数实时日线",
+    "api_name": "rt_idx_k",
+    "filename": "403_rt_idx_k.md",
+    "doc_id": 403,
+    "url": "https://tushare.pro/document/2?doc_id=403",
+    "updated_at": "2026-06-20 04:24:35"
+  },
+  "420": {
+    "title": "A股实时分钟",
+    "api_name": "rt_idx_min",
+    "filename": "420_rt_idx_min.md",
+    "doc_id": 420,
+    "url": "https://tushare.pro/document/2?doc_id=420",
+    "updated_at": "2026-06-20 04:24:39"
+  },
+  "171": {
+    "title": "指数周线行情",
+    "api_name": "index_weekly",
+    "filename": "171_index_weekly.md",
+    "doc_id": 171,
+    "url": "https://tushare.pro/document/2?doc_id=171",
+    "updated_at": "2026-06-20 04:24:43"
+  },
+  "419": {
+    "title": "指数历史分钟行情",
+    "api_name": "idx_mins",
+    "filename": "419_idx_mins.md",
+    "doc_id": 419,
+    "url": "https://tushare.pro/document/2?doc_id=419",
+    "updated_at": "2026-06-20 04:24:47"
+  },
+  "172": {
+    "title": "指数月线行情",
+    "api_name": "index_monthly",
+    "filename": "172_index_monthly.md",
+    "doc_id": 172,
+    "url": "https://tushare.pro/document/2?doc_id=172",
+    "updated_at": "2026-06-20 04:24:52"
+  },
+  "96": {
+    "title": "指数成分和权重",
+    "api_name": "index_weight",
+    "filename": "96_index_weight.md",
+    "doc_id": 96,
+    "url": "https://tushare.pro/document/2?doc_id=96",
+    "updated_at": "2026-06-20 04:24:56"
+  },
+  "128": {
+    "title": "大盘指数每日指标",
+    "api_name": "index_dailybasic",
+    "filename": "128_index_dailybasic.md",
+    "doc_id": 128,
+    "url": "https://tushare.pro/document/2?doc_id=128",
+    "updated_at": "2026-06-20 04:25:00"
+  },
+  "181": {
+    "title": "申万行业分类",
+    "api_name": "index_classify",
+    "filename": "181_index_classify.md",
+    "doc_id": 181,
+    "url": "https://tushare.pro/document/2?doc_id=181",
+    "updated_at": "2026-06-20 04:25:05"
+  },
+  "335": {
+    "title": "申万行业成分构成(分级)",
+    "api_name": "index_member_all",
+    "filename": "335_index_member_all.md",
+    "doc_id": 335,
+    "url": "https://tushare.pro/document/2?doc_id=335",
+    "updated_at": "2026-06-20 04:25:09"
+  },
+  "327": {
+    "title": "申万行业日线行情",
+    "api_name": "sw_daily",
+    "filename": "327_sw_daily.md",
+    "doc_id": 327,
+    "url": "https://tushare.pro/document/2?doc_id=327",
+    "updated_at": "2026-06-20 04:25:13"
+  },
+  "417": {
+    "title": "申万实时行情",
+    "api_name": "rt_sw_k",
+    "filename": "417_rt_sw_k.md",
+    "doc_id": 417,
+    "url": "https://tushare.pro/document/2?doc_id=417",
+    "updated_at": "2026-06-20 04:25:18"
+  },
+  "469": {
+    "title": "SW历史分钟",
+    "api_name": "sw_mins",
+    "filename": "469_sw_mins.md",
+    "doc_id": 469,
+    "url": "https://tushare.pro/document/2?doc_id=469",
+    "updated_at": "2026-06-20 04:25:22"
+  },
+  "373": {
+    "title": "中信行业成分",
+    "api_name": "ci_index_member",
+    "filename": "373_ci_index_member.md",
+    "doc_id": 373,
+    "url": "https://tushare.pro/document/2?doc_id=373",
+    "updated_at": "2026-06-20 04:25:26"
+  },
+  "308": {
+    "title": "中信行业指数行情",
+    "api_name": "ci_daily",
+    "filename": "308_ci_daily.md",
+    "doc_id": 308,
+    "url": "https://tushare.pro/document/2?doc_id=308",
+    "updated_at": "2026-06-20 04:25:31"
+  },
+  "211": {
+    "title": "国际指数",
+    "api_name": "index_global",
+    "filename": "211_index_global.md",
+    "doc_id": 211,
+    "url": "https://tushare.pro/document/2?doc_id=211",
+    "updated_at": "2026-06-20 04:25:35"
+  },
+  "358": {
+    "title": "指数技术因子(专业版)",
+    "api_name": "idx_factor_pro",
+    "filename": "358_idx_factor_pro.md",
+    "doc_id": 358,
+    "url": "https://tushare.pro/document/2?doc_id=358",
+    "updated_at": "2026-06-20 04:25:39"
+  },
+  "215": {
+    "title": "市场交易统计",
+    "api_name": "daily_info",
+    "filename": "215_daily_info.md",
+    "doc_id": 215,
+    "url": "https://tushare.pro/document/2?doc_id=215",
+    "updated_at": "2026-06-20 04:25:43"
+  },
+  "268": {
+    "title": "深圳市场每日交易概况",
+    "api_name": "sz_daily_info",
+    "filename": "268_sz_daily_info.md",
+    "doc_id": 268,
+    "url": "https://tushare.pro/document/2?doc_id=268",
+    "updated_at": "2026-06-20 04:25:47"
+  },
+  "19": {
+    "title": "公募基金列表",
+    "api_name": "fund_basic",
+    "filename": "19_fund_basic.md",
+    "doc_id": 19,
+    "url": "https://tushare.pro/document/2?doc_id=19",
+    "updated_at": "2026-06-20 04:25:52"
+  },
+  "118": {
+    "title": "公募基金公司",
+    "api_name": "fund_company",
+    "filename": "118_fund_company.md",
+    "doc_id": 118,
+    "url": "https://tushare.pro/document/2?doc_id=118",
+    "updated_at": "2026-06-20 04:25:56"
+  },
+  "208": {
+    "title": "基金经理",
+    "api_name": "fund_manager",
+    "filename": "208_fund_manager.md",
+    "doc_id": 208,
+    "url": "https://tushare.pro/document/2?doc_id=208",
+    "updated_at": "2026-06-20 04:26:00"
+  },
+  "462": {
+    "title": "基金业绩基准",
+    "api_name": "mkt_idx_bmk",
+    "filename": "462_mkt_idx_bmk.md",
+    "doc_id": 462,
+    "url": "https://tushare.pro/document/2?doc_id=462",
+    "updated_at": "2026-06-20 04:26:04"
+  },
+  "207": {
+    "title": "基金规模数据",
+    "api_name": "fund_share",
+    "filename": "207_fund_share.md",
+    "doc_id": 207,
+    "url": "https://tushare.pro/document/2?doc_id=207",
+    "updated_at": "2026-06-20 04:26:09"
+  },
+  "119": {
+    "title": "公募基金净值",
+    "api_name": "fund_nav",
+    "filename": "119_fund_nav.md",
+    "doc_id": 119,
+    "url": "https://tushare.pro/document/2?doc_id=119",
+    "updated_at": "2026-06-20 04:26:13"
+  },
+  "120": {
+    "title": "公募基金分红",
+    "api_name": "fund_div",
+    "filename": "120_fund_div.md",
+    "doc_id": 120,
+    "url": "https://tushare.pro/document/2?doc_id=120",
+    "updated_at": "2026-06-20 04:26:17"
+  },
+  "121": {
+    "title": "公募基金持仓数据",
+    "api_name": "fund_portfolio",
+    "filename": "121_fund_portfolio.md",
+    "doc_id": 121,
+    "url": "https://tushare.pro/document/2?doc_id=121",
+    "updated_at": "2026-06-20 04:26:21"
+  },
+  "359": {
+    "title": "场内基金技术因子(专业版)",
+    "api_name": "fund_factor_pro",
+    "filename": "359_fund_factor_pro.md",
+    "doc_id": 359,
+    "url": "https://tushare.pro/document/2?doc_id=359",
+    "updated_at": "2026-06-20 04:26:26"
+  },
+  "135": {
+    "title": "期货合约信息表",
+    "api_name": "fut_basic",
+    "filename": "135_fut_basic.md",
+    "doc_id": 135,
+    "url": "https://tushare.pro/document/2?doc_id=135",
+    "updated_at": "2026-06-20 04:26:30"
+  },
+  "467": {
+    "title": "交易日历",
+    "api_name": "fut_trade_cal",
+    "filename": "467_fut_trade_cal.md",
+    "doc_id": 467,
+    "url": "https://tushare.pro/document/2?doc_id=467",
+    "updated_at": "2026-06-20 04:26:34"
+  },
+  "138": {
+    "title": "期货日线行情",
+    "api_name": "fut_daily",
+    "filename": "138_fut_daily.md",
+    "doc_id": 138,
+    "url": "https://tushare.pro/document/2?doc_id=138",
+    "updated_at": "2026-06-20 04:26:38"
+  },
+  "337": {
+    "title": "期货周/月线行情(每日更新)",
+    "api_name": "fut_weekly_monthly",
+    "filename": "337_fut_weekly_monthly.md",
+    "doc_id": 337,
+    "url": "https://tushare.pro/document/2?doc_id=337",
+    "updated_at": "2026-06-20 04:26:43"
+  },
+  "313": {
+    "title": "期货历史分钟行情",
+    "api_name": "ft_mins",
+    "filename": "313_ft_mins.md",
+    "doc_id": 313,
+    "url": "https://tushare.pro/document/2?doc_id=313",
+    "updated_at": "2026-06-20 04:26:47"
+  },
+  "340": {
+    "title": "期货实时分钟行情",
+    "api_name": "rt_fut_min",
+    "filename": "340_rt_fut_min.md",
+    "doc_id": 340,
+    "url": "https://tushare.pro/document/2?doc_id=340",
+    "updated_at": "2026-06-20 04:26:51"
+  },
+  "140": {
+    "title": "仓单日报",
+    "api_name": "fut_wsr",
+    "filename": "140_fut_wsr.md",
+    "doc_id": 140,
+    "url": "https://tushare.pro/document/2?doc_id=140",
+    "updated_at": "2026-06-20 04:26:55"
+  },
+  "141": {
+    "title": "结算参数",
+    "api_name": "fut_settle",
+    "filename": "141_fut_settle.md",
+    "doc_id": 141,
+    "url": "https://tushare.pro/document/2?doc_id=141",
+    "updated_at": "2026-06-20 04:27:00"
+  },
+  "314": {
+    "title": "期货Tick行情数据",
+    "api_name": "",
+    "filename": "314_期货Tick行情数据.md",
+    "doc_id": 314,
+    "url": "https://tushare.pro/document/2?doc_id=314",
+    "updated_at": "2026-06-20 04:27:04"
+  },
+  "139": {
+    "title": "每日成交持仓排名",
+    "api_name": "fut_holding",
+    "filename": "139_fut_holding.md",
+    "doc_id": 139,
+    "url": "https://tushare.pro/document/2?doc_id=139",
+    "updated_at": "2026-06-20 04:27:08"
+  },
+  "468": {
+    "title": "南华期货指数日线行情",
+    "api_name": "fut_index_daily",
+    "filename": "468_fut_index_daily.md",
+    "doc_id": 468,
+    "url": "https://tushare.pro/document/2?doc_id=468",
+    "updated_at": "2026-06-20 04:27:12"
+  },
+  "189": {
+    "title": "期货主力与连续合约",
+    "api_name": "fut_mapping",
+    "filename": "189_fut_mapping.md",
+    "doc_id": 189,
+    "url": "https://tushare.pro/document/2?doc_id=189",
+    "updated_at": "2026-06-20 04:27:17"
+  },
+  "216": {
+    "title": "期货主要品种交易周报",
+    "api_name": "fut_weekly_detail",
+    "filename": "216_fut_weekly_detail.md",
+    "doc_id": 216,
+    "url": "https://tushare.pro/document/2?doc_id=216",
+    "updated_at": "2026-06-20 04:27:21"
+  },
+  "368": {
+    "title": "期货合约涨跌停价格（盘前）",
+    "api_name": "ft_limit",
+    "filename": "368_ft_limit.md",
+    "doc_id": 368,
+    "url": "https://tushare.pro/document/2?doc_id=368",
+    "updated_at": "2026-06-20 04:27:25"
+  },
+  "284": {
+    "title": "黄金现货基础信息",
+    "api_name": "sge_basic",
+    "filename": "284_sge_basic.md",
+    "doc_id": 284,
+    "url": "https://tushare.pro/document/2?doc_id=284",
+    "updated_at": "2026-06-20 04:27:30"
+  },
+  "285": {
+    "title": "现货黄金日行情",
+    "api_name": "sge_daily",
+    "filename": "285_sge_daily.md",
+    "doc_id": 285,
+    "url": "https://tushare.pro/document/2?doc_id=285",
+    "updated_at": "2026-06-20 04:27:34"
+  },
+  "158": {
+    "title": "期权合约信息",
+    "api_name": "opt_basic",
+    "filename": "158_opt_basic.md",
+    "doc_id": 158,
+    "url": "https://tushare.pro/document/2?doc_id=158",
+    "updated_at": "2026-06-20 04:27:38"
+  },
+  "159": {
+    "title": "期权日线行情",
+    "api_name": "opt_daily",
+    "filename": "159_opt_daily.md",
+    "doc_id": 159,
+    "url": "https://tushare.pro/document/2?doc_id=159",
+    "updated_at": "2026-06-20 04:27:42"
+  },
+  "341": {
+    "title": "期权历史分钟行情",
+    "api_name": "opt_mins",
+    "filename": "341_opt_mins.md",
+    "doc_id": 341,
+    "url": "https://tushare.pro/document/2?doc_id=341",
+    "updated_at": "2026-06-20 04:27:47"
+  },
+  "185": {
+    "title": "可转债基本信息",
+    "api_name": "cb_basic",
+    "filename": "185_cb_basic.md",
+    "doc_id": 185,
+    "url": "https://tushare.pro/document/2?doc_id=185",
+    "updated_at": "2026-06-20 04:27:51"
+  },
+  "186": {
+    "title": "可转债发行",
+    "api_name": "cb_issue",
+    "filename": "186_cb_issue.md",
+    "doc_id": 186,
+    "url": "https://tushare.pro/document/2?doc_id=186",
+    "updated_at": "2026-06-20 04:27:55"
+  },
+  "269": {
+    "title": "可转债赎回信息",
+    "api_name": "cb_call",
+    "filename": "269_cb_call.md",
+    "doc_id": 269,
+    "url": "https://tushare.pro/document/2?doc_id=269",
+    "updated_at": "2026-06-20 04:27:59"
+  },
+  "305": {
+    "title": "可转债票面利率",
+    "api_name": "cb_rate",
+    "filename": "305_cb_rate.md",
+    "doc_id": 305,
+    "url": "https://tushare.pro/document/2?doc_id=305",
+    "updated_at": "2026-06-20 04:28:04"
+  },
+  "187": {
+    "title": "可转债行情",
+    "api_name": "cb_daily",
+    "filename": "187_cb_daily.md",
+    "doc_id": 187,
+    "url": "https://tushare.pro/document/2?doc_id=187",
+    "updated_at": "2026-06-20 04:28:08"
+  },
+  "459": {
+    "title": "可转债十大持有人",
+    "api_name": "top10_cb_holders",
+    "filename": "459_top10_cb_holders.md",
+    "doc_id": 459,
+    "url": "https://tushare.pro/document/2?doc_id=459",
+    "updated_at": "2026-06-20 04:28:12"
+  },
+  "392": {
+    "title": "可转债技术因子(专业版)",
+    "api_name": "cb_factor_pro",
+    "filename": "392_cb_factor_pro.md",
+    "doc_id": 392,
+    "url": "https://tushare.pro/document/2?doc_id=392",
+    "updated_at": "2026-06-20 04:28:16"
+  },
+  "246": {
+    "title": "可转债转股价变动",
+    "api_name": "cb_price_chg",
+    "filename": "246_cb_price_chg.md",
+    "doc_id": 246,
+    "url": "https://tushare.pro/document/2?doc_id=246",
+    "updated_at": "2026-06-20 04:28:21"
+  },
+  "247": {
+    "title": "可转债转股结果",
+    "api_name": "cb_share",
+    "filename": "247_cb_share.md",
+    "doc_id": 247,
+    "url": "https://tushare.pro/document/2?doc_id=247",
+    "updated_at": "2026-06-20 04:28:25"
+  },
+  "458": {
+    "title": "可转债债券评级",
+    "api_name": "cb_rating",
+    "filename": "458_cb_rating.md",
+    "doc_id": 458,
+    "url": "https://tushare.pro/document/2?doc_id=458",
+    "updated_at": "2026-06-20 04:28:29"
+  },
+  "256": {
+    "title": "债券回购日行情",
+    "api_name": "repo_daily",
+    "filename": "256_repo_daily.md",
+    "doc_id": 256,
+    "url": "https://tushare.pro/document/2?doc_id=256",
+    "updated_at": "2026-06-20 04:28:33"
+  },
+  "322": {
+    "title": "柜台流通式债券报价",
+    "api_name": "bc_otcqt",
+    "filename": "322_bc_otcqt.md",
+    "doc_id": 322,
+    "url": "https://tushare.pro/document/2?doc_id=322",
+    "updated_at": "2026-06-20 04:28:38"
+  },
+  "323": {
+    "title": "柜台流通式债券最优报价",
+    "api_name": "bc_bestotcqt",
+    "filename": "323_bc_bestotcqt.md",
+    "doc_id": 323,
+    "url": "https://tushare.pro/document/2?doc_id=323",
+    "updated_at": "2026-06-20 04:28:42"
+  },
+  "271": {
+    "title": "债券大宗交易",
+    "api_name": "bond_blk",
+    "filename": "271_bond_blk.md",
+    "doc_id": 271,
+    "url": "https://tushare.pro/document/2?doc_id=271",
+    "updated_at": "2026-06-20 04:28:46"
+  },
+  "272": {
+    "title": "大宗交易明细",
+    "api_name": "bond_blk_detail",
+    "filename": "272_bond_blk_detail.md",
+    "doc_id": 272,
+    "url": "https://tushare.pro/document/2?doc_id=272",
+    "updated_at": "2026-06-20 04:28:50"
+  },
+  "201": {
+    "title": "国债收益率曲线",
+    "api_name": "yc_cb",
+    "filename": "201_yc_cb.md",
+    "doc_id": 201,
+    "url": "https://tushare.pro/document/2?doc_id=201",
+    "updated_at": "2026-06-20 04:28:55"
+  },
+  "233": {
+    "title": "财经日历",
+    "api_name": "eco_cal",
+    "filename": "233_eco_cal.md",
+    "doc_id": 233,
+    "url": "https://tushare.pro/document/2?doc_id=233",
+    "updated_at": "2026-06-20 04:28:59"
+  },
+  "178": {
+    "title": "外汇基础信息（海外）",
+    "api_name": "fx_obasic",
+    "filename": "178_fx_obasic.md",
+    "doc_id": 178,
+    "url": "https://tushare.pro/document/2?doc_id=178",
+    "updated_at": "2026-06-20 04:29:03"
+  },
+  "179": {
+    "title": "外汇日线行情",
+    "api_name": "fx_daily",
+    "filename": "179_fx_daily.md",
+    "doc_id": 179,
+    "url": "https://tushare.pro/document/2?doc_id=179",
+    "updated_at": "2026-06-20 04:29:07"
+  },
+  "191": {
+    "title": "港股列表",
+    "api_name": "hk_basic",
+    "filename": "191_hk_basic.md",
+    "doc_id": 191,
+    "url": "https://tushare.pro/document/2?doc_id=191",
+    "updated_at": "2026-06-20 04:29:12"
+  },
+  "250": {
+    "title": "港股交易日历",
+    "api_name": "hk_tradecal",
+    "filename": "250_hk_tradecal.md",
+    "doc_id": 250,
+    "url": "https://tushare.pro/document/2?doc_id=250",
+    "updated_at": "2026-06-20 04:29:16"
+  },
+  "192": {
+    "title": "港股行情",
+    "api_name": "hk_daily",
+    "filename": "192_hk_daily.md",
+    "doc_id": 192,
+    "url": "https://tushare.pro/document/2?doc_id=192",
+    "updated_at": "2026-06-20 04:29:20"
+  },
+  "339": {
+    "title": "港股复权行情",
+    "api_name": "hk_daily_adj",
+    "filename": "339_hk_daily_adj.md",
+    "doc_id": 339,
+    "url": "https://tushare.pro/document/2?doc_id=339",
+    "updated_at": "2026-06-20 04:29:25"
+  },
+  "401": {
+    "title": "港股复权因子",
+    "api_name": "hk_adjfactor",
+    "filename": "401_hk_adjfactor.md",
+    "doc_id": 401,
+    "url": "https://tushare.pro/document/2?doc_id=401",
+    "updated_at": "2026-06-20 04:29:29"
+  },
+  "304": {
+    "title": "港股分钟行情",
+    "api_name": "hk_mins",
+    "filename": "304_hk_mins.md",
+    "doc_id": 304,
+    "url": "https://tushare.pro/document/2?doc_id=304",
+    "updated_at": "2026-06-20 04:29:33"
+  },
+  "383": {
+    "title": "港股实时日线",
+    "api_name": "rt_hk_k",
+    "filename": "383_rt_hk_k.md",
+    "doc_id": 383,
+    "url": "https://tushare.pro/document/2?doc_id=383",
+    "updated_at": "2026-06-20 04:29:37"
+  },
+  "389": {
+    "title": "港股利润表",
+    "api_name": "hk_income",
+    "filename": "389_hk_income.md",
+    "doc_id": 389,
+    "url": "https://tushare.pro/document/2?doc_id=389",
+    "updated_at": "2026-06-20 04:29:41"
+  },
+  "390": {
+    "title": "港股资产负债表",
+    "api_name": "hk_balancesheet",
+    "filename": "390_hk_balancesheet.md",
+    "doc_id": 390,
+    "url": "https://tushare.pro/document/2?doc_id=390",
+    "updated_at": "2026-06-20 04:29:46"
+  },
+  "391": {
+    "title": "港股现金流量表",
+    "api_name": "hk_cashflow",
+    "filename": "391_hk_cashflow.md",
+    "doc_id": 391,
+    "url": "https://tushare.pro/document/2?doc_id=391",
+    "updated_at": "2026-06-20 04:29:50"
+  },
+  "388": {
+    "title": "港股财务指标数据",
+    "api_name": "hk_fina_indicator",
+    "filename": "388_hk_fina_indicator.md",
+    "doc_id": 388,
+    "url": "https://tushare.pro/document/2?doc_id=388",
+    "updated_at": "2026-06-20 04:29:54"
+  },
+  "252": {
+    "title": "美股列表",
+    "api_name": "us_basic",
+    "filename": "252_us_basic.md",
+    "doc_id": 252,
+    "url": "https://tushare.pro/document/2?doc_id=252",
+    "updated_at": "2026-06-20 04:29:58"
+  },
+  "253": {
+    "title": "美股交易日历",
+    "api_name": "us_tradecal",
+    "filename": "253_us_tradecal.md",
+    "doc_id": 253,
+    "url": "https://tushare.pro/document/2?doc_id=253",
+    "updated_at": "2026-06-20 04:30:03"
+  },
+  "254": {
+    "title": "美股行情",
+    "api_name": "us_daily",
+    "filename": "254_us_daily.md",
+    "doc_id": 254,
+    "url": "https://tushare.pro/document/2?doc_id=254",
+    "updated_at": "2026-06-20 04:30:07"
+  },
+  "338": {
+    "title": "美股复权行情",
+    "api_name": "us_daily_adj",
+    "filename": "338_us_daily_adj.md",
+    "doc_id": 338,
+    "url": "https://tushare.pro/document/2?doc_id=338",
+    "updated_at": "2026-06-20 04:30:11"
+  },
+  "402": {
+    "title": "美股复权因子",
+    "api_name": "us_adjfactor",
+    "filename": "402_us_adjfactor.md",
+    "doc_id": 402,
+    "url": "https://tushare.pro/document/2?doc_id=402",
+    "updated_at": "2026-06-20 04:30:15"
+  },
+  "394": {
+    "title": "美股利润表",
+    "api_name": "us_income",
+    "filename": "394_us_income.md",
+    "doc_id": 394,
+    "url": "https://tushare.pro/document/2?doc_id=394",
+    "updated_at": "2026-06-20 04:30:20"
+  },
+  "395": {
+    "title": "美股资产负债表",
+    "api_name": "us_balancesheet",
+    "filename": "395_us_balancesheet.md",
+    "doc_id": 395,
+    "url": "https://tushare.pro/document/2?doc_id=395",
+    "updated_at": "2026-06-20 04:30:24"
+  },
+  "396": {
+    "title": "美股现金流量表",
+    "api_name": "us_cashflow",
+    "filename": "396_us_cashflow.md",
+    "doc_id": 396,
+    "url": "https://tushare.pro/document/2?doc_id=396",
+    "updated_at": "2026-06-20 04:30:28"
+  },
+  "393": {
+    "title": "美股财务指标数据",
+    "api_name": "us_fina_indicator",
+    "filename": "393_us_fina_indicator.md",
+    "doc_id": 393,
+    "url": "https://tushare.pro/document/2?doc_id=393",
+    "updated_at": "2026-06-20 04:30:32"
+  },
+  "461": {
+    "title": "中国经济数据发布日程",
+    "api_name": "cn_schedule",
+    "filename": "461_cn_schedule.md",
+    "doc_id": 461,
+    "url": "https://tushare.pro/document/2?doc_id=461",
+    "updated_at": "2026-06-20 04:30:37"
+  },
+  "149": {
+    "title": "Shibor利率数据",
+    "api_name": "shibor",
+    "filename": "149_shibor.md",
+    "doc_id": 149,
+    "url": "https://tushare.pro/document/2?doc_id=149",
+    "updated_at": "2026-06-20 04:30:41"
+  },
+  "150": {
+    "title": "Shibor报价数据",
+    "api_name": "shibor_quote",
+    "filename": "150_shibor_quote.md",
+    "doc_id": 150,
+    "url": "https://tushare.pro/document/2?doc_id=150",
+    "updated_at": "2026-06-20 04:30:45"
+  },
+  "151": {
+    "title": "LPR贷款基础利率",
+    "api_name": "shibor_lpr",
+    "filename": "151_shibor_lpr.md",
+    "doc_id": 151,
+    "url": "https://tushare.pro/document/2?doc_id=151",
+    "updated_at": "2026-06-20 04:30:49"
+  },
+  "152": {
+    "title": "Libor拆借利率",
+    "api_name": "libor",
+    "filename": "152_libor.md",
+    "doc_id": 152,
+    "url": "https://tushare.pro/document/2?doc_id=152",
+    "updated_at": "2026-06-20 04:30:54"
+  },
+  "153": {
+    "title": "Hibor利率",
+    "api_name": "hibor",
+    "filename": "153_hibor.md",
+    "doc_id": 153,
+    "url": "https://tushare.pro/document/2?doc_id=153",
+    "updated_at": "2026-06-20 04:30:58"
+  },
+  "173": {
+    "title": "温州民间借贷利率",
+    "api_name": "wz_index",
+    "filename": "173_wz_index.md",
+    "doc_id": 173,
+    "url": "https://tushare.pro/document/2?doc_id=173",
+    "updated_at": "2026-06-20 04:31:03"
+  },
+  "174": {
+    "title": "广州民间借贷利率",
+    "api_name": "gz_index",
+    "filename": "174_gz_index.md",
+    "doc_id": 174,
+    "url": "https://tushare.pro/document/2?doc_id=174",
+    "updated_at": "2026-06-20 04:31:07"
+  },
+  "227": {
+    "title": "GDP数据",
+    "api_name": "cn_gdp",
+    "filename": "227_cn_gdp.md",
+    "doc_id": 227,
+    "url": "https://tushare.pro/document/2?doc_id=227",
+    "updated_at": "2026-06-20 04:31:11"
+  },
+  "228": {
+    "title": "居民消费价格指数",
+    "api_name": "cn_cpi",
+    "filename": "228_cn_cpi.md",
+    "doc_id": 228,
+    "url": "https://tushare.pro/document/2?doc_id=228",
+    "updated_at": "2026-06-20 04:31:15"
+  },
+  "245": {
+    "title": "工业生产者出厂价格指数",
+    "api_name": "cn_ppi",
+    "filename": "245_cn_ppi.md",
+    "doc_id": 245,
+    "url": "https://tushare.pro/document/2?doc_id=245",
+    "updated_at": "2026-06-20 04:31:19"
+  },
+  "242": {
+    "title": "货币供应量",
+    "api_name": "cn_m",
+    "filename": "242_cn_m.md",
+    "doc_id": 242,
+    "url": "https://tushare.pro/document/2?doc_id=242",
+    "updated_at": "2026-06-20 04:31:24"
+  },
+  "310": {
+    "title": "社融数据（月度）",
+    "api_name": "sf_month",
+    "filename": "310_sf_month.md",
+    "doc_id": 310,
+    "url": "https://tushare.pro/document/2?doc_id=310",
+    "updated_at": "2026-06-20 04:31:28"
+  },
+  "325": {
+    "title": "采购经理人指数",
+    "api_name": "cn_pmi",
+    "filename": "325_cn_pmi.md",
+    "doc_id": 325,
+    "url": "https://tushare.pro/document/2?doc_id=325",
+    "updated_at": "2026-06-20 04:31:32"
+  },
+  "219": {
+    "title": "国债收益率曲线利率（日频）",
+    "api_name": "us_tycr",
+    "filename": "219_us_tycr.md",
+    "doc_id": 219,
+    "url": "https://tushare.pro/document/2?doc_id=219",
+    "updated_at": "2026-06-20 04:31:37"
+  },
+  "220": {
+    "title": "国债实际收益率曲线利率",
+    "api_name": "us_trycr",
+    "filename": "220_us_trycr.md",
+    "doc_id": 220,
+    "url": "https://tushare.pro/document/2?doc_id=220",
+    "updated_at": "2026-06-20 04:31:41"
+  },
+  "221": {
+    "title": "短期国债利率",
+    "api_name": "us_tbr",
+    "filename": "221_us_tbr.md",
+    "doc_id": 221,
+    "url": "https://tushare.pro/document/2?doc_id=221",
+    "updated_at": "2026-06-20 04:31:45"
+  },
+  "222": {
+    "title": "国债长期利率",
+    "api_name": "us_tltr",
+    "filename": "222_us_tltr.md",
+    "doc_id": 222,
+    "url": "https://tushare.pro/document/2?doc_id=222",
+    "updated_at": "2026-06-20 04:31:49"
+  },
+  "223": {
+    "title": "国债实际长期利率平均值",
+    "api_name": "us_trltr",
+    "filename": "223_us_trltr.md",
+    "doc_id": 223,
+    "url": "https://tushare.pro/document/2?doc_id=223",
+    "updated_at": "2026-06-20 04:31:53"
+  },
+  "406": {
+    "title": "国家政策库",
+    "api_name": "npr",
+    "filename": "406_npr.md",
+    "doc_id": 406,
+    "url": "https://tushare.pro/document/2?doc_id=406",
+    "updated_at": "2026-06-20 04:31:58"
+  },
+  "415": {
+    "title": "券商研究报告",
+    "api_name": "research_report",
+    "filename": "415_research_report.md",
+    "doc_id": 415,
+    "url": "https://tushare.pro/document/2?doc_id=415",
+    "updated_at": "2026-06-20 04:32:02"
+  },
+  "465": {
+    "title": "央行货币政策执行报告",
+    "api_name": "monetary_policy",
+    "filename": "465_monetary_policy.md",
+    "doc_id": 465,
+    "url": "https://tushare.pro/document/2?doc_id=465",
+    "updated_at": "2026-06-20 04:32:06"
+  },
+  "143": {
+    "title": "新闻快讯",
+    "api_name": "news",
+    "filename": "143_news.md",
+    "doc_id": 143,
+    "url": "https://tushare.pro/document/2?doc_id=143",
+    "updated_at": "2026-06-20 04:32:11"
+  },
+  "195": {
+    "title": "新闻通讯",
+    "api_name": "major_news",
+    "filename": "195_major_news.md",
+    "doc_id": 195,
+    "url": "https://tushare.pro/document/2?doc_id=195",
+    "updated_at": "2026-06-20 04:32:15"
+  },
+  "154": {
+    "title": "新闻联播",
+    "api_name": "cctv_news",
+    "filename": "154_cctv_news.md",
+    "doc_id": 154,
+    "url": "https://tushare.pro/document/2?doc_id=154",
+    "updated_at": "2026-06-20 04:32:19"
+  },
+  "176": {
+    "title": "上市公司全量公告",
+    "api_name": "anns_d",
+    "filename": "176_anns_d.md",
+    "doc_id": 176,
+    "url": "https://tushare.pro/document/2?doc_id=176",
+    "updated_at": "2026-06-20 04:32:24"
+  },
+  "366": {
+    "title": "上证E互动",
+    "api_name": "irm_qa_sh",
+    "filename": "366_irm_qa_sh.md",
+    "doc_id": 366,
+    "url": "https://tushare.pro/document/2?doc_id=366",
+    "updated_at": "2026-06-20 04:32:28"
+  },
+  "367": {
+    "title": "深证互动易",
+    "api_name": "irm_qa_sz",
+    "filename": "367_irm_qa_sz.md",
+    "doc_id": 367,
+    "url": "https://tushare.pro/document/2?doc_id=367",
+    "updated_at": "2026-06-20 04:32:32"
+  },
+  "209": {
+    "title": "Tushare数据索引",
+    "api_name": "",
+    "filename": "209_Tushare数据索引.md",
+    "doc_id": 209,
+    "url": "https://tushare.pro/document/2?doc_id=209",
+    "updated_at": "2026-06-20 04:32:36"
+  }
+}

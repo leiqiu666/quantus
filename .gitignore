@@ -1,0 +1,83 @@
+# ==================== 密钥 / 本地环境 ====================
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# ==================== Python / uv ====================
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.cover
+.Python
+
+# uv.lock 应提交以保证可复现安装，不要忽略
+
+# ==================== 前端 (src/web/**) ====================
+# 依赖与构建产物（admin 用 pnpm；子目录自带 .gitignore 时此处作兜底）
+**/node_modules/
+**/dist/
+**/dist-ssr/
+**/.vite/
+**/.turbo/
+**/coverage/
+**/*.tsbuildinfo
+*.local
+
+# 仅保留 pnpm-lock.yaml；npm/yarn 锁文件勿提交
+**/package-lock.json
+**/yarn.lock
+
+# 前端日志
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ==================== 数据 / 产物 ====================
+data/
+*.parquet
+*.duckdb
+*.duckdb.wal
+
+# 本地备份压缩包
+*.zip
+*.tar.gz
+*.7z
+
+# ==================== 日志 / 临时 ====================
+logs/
+*.log
+tmp/
+temp/
+.cache/
+.parcel-cache/
+
+# ==================== IDE / OS ====================
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+!.vscode/extensions.json
+*.sw?
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# ==================== Claude / 本地工具 ====================
+.cursor/
+.claude/settings.local.json
+**/cookies.json

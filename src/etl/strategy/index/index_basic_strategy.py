@@ -1,0 +1,25 @@
+"""指数基本信息 Strategy。"""
+
+from __future__ import annotations
+
+import queue
+
+from src.etl.workflow.index.index_basic_workflow import IndexBasicWorkflow
+
+
+class IndexBasicStrategy:
+    def __init__(self) -> None:
+        self.workflow = IndexBasicWorkflow()
+
+    def pull_snapshot(self, *, progress_queue: queue.Queue | None = None) -> int:
+        if progress_queue is not None:
+            progress_queue.put({"status": "running", "total": 1})
+        saved = self.workflow.pull_index_basic_snapshot()
+        if progress_queue is not None:
+            progress_queue.put({
+                "index": 1,
+                "total": 1,
+                "period": "snapshot",
+                "saved": saved,
+            })
+        return saved

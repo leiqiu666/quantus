@@ -1,0 +1,97 @@
+@import 'tailwindcss';
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@keyframes sse-task-flash-success {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(34, 197, 94, 0.35);
+  }
+}
+
+@keyframes sse-task-flash-error {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(239, 68, 68, 0.35);
+  }
+}
+
+@keyframes sse-task-slide-out-right {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(calc(100% + 48px));
+    opacity: 0;
+  }
+}
+
+.sse-task-modal-wrap {
+  pointer-events: none;
+}
+
+.sse-task-modal-wrap .ant-modal {
+  pointer-events: auto;
+}
+
+.sse-task-modal-wrap .ant-modal-content {
+  box-shadow:
+    0 6px 16px 0 rgba(0, 0, 0, 0.08),
+    0 3px 6px -4px rgba(0, 0, 0, 0.12),
+    0 9px 28px 8px rgba(0, 0, 0, 0.05);
+}
+
+.sse-task-modal-wrap--success-flash .ant-modal-content {
+  animation: sse-task-flash-success 0.75s ease-in-out 3;
+  border: 1px solid rgba(34, 197, 94, 0.45);
+}
+
+.sse-task-modal-wrap--error-flash .ant-modal-content {
+  animation: sse-task-flash-error 0.75s ease-in-out 3;
+  border: 1px solid rgba(239, 68, 68, 0.55);
+}
+
+.sse-task-modal-wrap--slide-out {
+  animation: sse-task-slide-out-right 0.4s ease-in forwards;
+  pointer-events: none;
+}
+
+.sse-task-dock-card {
+  cursor: pointer;
+}
+
+.sse-task-dock-card--success-flash {
+  animation: sse-task-flash-success 0.75s ease-in-out 3;
+  border: 1px solid rgba(34, 197, 94, 0.45);
+}
+
+.sse-task-dock-card--error-flash {
+  animation: sse-task-flash-error 0.75s ease-in-out 3;
+  border: 1px solid rgba(239, 68, 68, 0.55);
+}
+
+.sse-task-dock-card--slide-out {
+  animation: sse-task-slide-out-right 0.4s ease-in forwards;
+  pointer-events: none;
+}

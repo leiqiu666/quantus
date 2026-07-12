@@ -1,0 +1,34 @@
+---
+doc_id: 267
+title: "券商每月荐股"
+api_name: "broker_recommend"
+url: "https://tushare.pro/document/2?doc_id=267"
+---
+
+## 券商每月荐股
+
+---
+
+接口：broker_recommend  
+描述：获取券商月度金股，一般1日~3日内更新当月数据  
+限量：单次最大1000行数据，可循环提取  
+积分：积分达到6000即可调用，具体请参阅[积分获取办法](https://tushare.pro/document/1?doc_id=13)
+
+### 输入参数
+
+| 名称 | 类型 | 必选 | 描述 |
+| --- | --- | --- | --- |
+| month | str | Y | 月度（YYYYMM） |
+
+### 输出参数
+
+| 名称 | 类型 | 默认显示 | 描述 |
+| --- | --- | --- | --- |
+| month | str | Y | 月度 |
+| broker | str | Y | 券商 |
+| ts_code | str | Y | 股票代码 |
+| name | str | Y | 股票简称 |
+
+### 接口示例
+
+### 数据示例
