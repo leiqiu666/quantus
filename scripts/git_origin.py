@@ -9,7 +9,7 @@
   uv run python scripts/git_origin.py clean
 
 【增加 origin】
-  python scripts/git_origin.py add git@github.com:leiqiu666/quantus.git
+  python scripts/git_origin.py add git@github.com:xxx/xxx.git
   # 若已存在 origin，会先删再加（等价换 URL）
 
 【可选】指定仓库根目录（默认：本脚本所在仓库根，即 quantus/）
