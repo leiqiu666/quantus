@@ -3,13 +3,10 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   appendTaskLog,
   closeTask,
-  completeSequenceStep,
-  failSequenceStep,
   finishRowSequenceTask,
   minimizeTask,
   promoteTaskFromQueue,
   restoreTask,
-  setSequenceStep,
   setTaskError,
   setTaskFlash,
   setTaskSuccess,
@@ -18,8 +15,8 @@ import type { AppDispatch } from '@/store';
 import type { SseTask } from '@/store/slices/sseTaskSlice';
 import { store } from '@/store';
 import { ETL_SSE_MAX_CONCURRENT } from '@/config/sse';
+import { cancelSchedulerRun } from '@/services/scheduler';
 import { executeEtlSseStream } from './sseRunner';
-import { verifyStepCompleteness } from './completenessVerify';
 import { useTaskFlashLifecycle } from './useTaskFlashLifecycle';
 import SseTaskModal from './SseTaskModal';
 import SseTaskDock from './SseTaskDock';
@@ -45,75 +42,27 @@ async function runRowSequenceTask(task: SseTask, dispatch: AppDispatch) {
   const controller = new AbortController();
   abortControllers.set(task.id, controller);
 
-  let failedCount = 0;
-
   try {
-    for (let i = 0; i < steps.length; i++) {
-      if (controller.signal.aborted) {
-        dispatch(appendTaskLog({ id: task.id, message: '任务已取消' }));
-        return;
-      }
+    await executeEtlSseStream({
+      taskId: task.id,
+      dispatch,
+      signal: controller.signal,
+      mode: 'row_sequence',
+      taskKey: 'row_sequence',
+      name: task.name,
+      startDate: task.startDate,
+      endDate: task.endDate,
+      dashboardGroupId: task.dashboardGroupId,
+      dashboardDateKey: task.dashboardDateKey,
+      steps,
+    });
 
-      const step = steps[i];
-      dispatch(
-        setSequenceStep({
-          id: task.id,
-          stepIndex: i,
-          stepLabel: step.label,
-        }),
-      );
-
-      try {
-        await executeEtlSseStream({
-          taskId: task.id,
-          dispatch,
-          signal: controller.signal,
-          logSubProgressOnly: true,
-          mode: step.mode,
-          taskKey: step.taskKey,
-          startDate: step.startDate,
-          endDate: step.endDate,
-        });
-
-        if (
-          task.dashboardGroupId &&
-          task.dashboardDateKey &&
-          step.columnKey
-        ) {
-          await verifyStepCompleteness({
-            groupId: task.dashboardGroupId,
-            dateKey: task.dashboardDateKey,
-            columnKey: step.columnKey,
-            stepLabel: step.label,
-            threshold: step.threshold,
-          });
-        }
-
-        dispatch(
-          completeSequenceStep({
-            id: task.id,
-            stepIndex: i,
-            message: `${step.label} 完成`,
-          }),
-        );
-      } catch (err: unknown) {
-        if (controller.signal.aborted) {
-          dispatch(appendTaskLog({ id: task.id, message: '任务已取消' }));
-          return;
-        }
-        failedCount += 1;
-        const message = err instanceof Error ? err.message : String(err);
-        dispatch(
-          failSequenceStep({
-            id: task.id,
-            stepIndex: i,
-            label: step.label,
-            message,
-          }),
-        );
-      }
+    if (controller.signal.aborted) {
+      return;
     }
 
+    const latest = store.getState().sseTask.tasks.find((t) => t.id === task.id);
+    const failedCount = latest?.failedStepCount ?? 0;
     dispatch(
       finishRowSequenceTask({
         id: task.id,
@@ -127,6 +76,32 @@ async function runRowSequenceTask(task: SseTask, dispatch: AppDispatch) {
         flash: failedCount > 0 ? 'error' : 'success',
       }),
     );
+  } catch (err: unknown) {
+    if (controller.signal.aborted) {
+      dispatch(appendTaskLog({ id: task.id, message: '任务已停止' }));
+      return;
+    }
+    const message = err instanceof Error ? err.message : String(err);
+    if (message === '任务已停止') {
+      return;
+    }
+    const latestAfterError = store
+      .getState()
+      .sseTask.tasks.find((t) => t.id === task.id);
+    const failedAfterError = latestAfterError?.failedStepCount ?? 0;
+    if (failedAfterError > 0) {
+      dispatch(
+        finishRowSequenceTask({
+          id: task.id,
+          failedCount: failedAfterError,
+          totalSteps: steps.length,
+        }),
+      );
+      dispatch(setTaskFlash({ id: task.id, flash: 'error' }));
+      return;
+    }
+    dispatch(setTaskError({ id: task.id, message }));
+    dispatch(setTaskFlash({ id: task.id, flash: 'error' }));
   } finally {
     runningRef.delete(task.id);
     abortControllers.delete(task.id);
@@ -156,10 +131,13 @@ async function runSingleSseTask(task: SseTask, dispatch: AppDispatch) {
     dispatch(setTaskFlash({ id: task.id, flash: 'success' }));
   } catch (err: unknown) {
     if (controller.signal.aborted) {
-      dispatch(appendTaskLog({ id: task.id, message: '任务已取消' }));
+      dispatch(appendTaskLog({ id: task.id, message: '任务已停止' }));
       return;
     }
     const message = err instanceof Error ? err.message : String(err);
+    if (message === '任务已停止') {
+      return;
+    }
     dispatch(setTaskError({ id: task.id, message }));
     dispatch(setTaskFlash({ id: task.id, flash: 'error' }));
   } finally {
@@ -200,11 +178,28 @@ export default function SseTaskManager() {
 
   const handleClose = useCallback(
     (id: string) => {
+      // 仅关闭 UI / 断开 SSE 订阅，不取消后端补位（关页不中断）
       runningRef.delete(id);
       abortControllers.get(id)?.abort();
       abortControllers.delete(id);
       dispatch(closeTask(id));
       tryStartQueuedTasks(dispatch);
+    },
+    [dispatch],
+  );
+
+  const handleStop = useCallback(
+    async (id: string) => {
+      const task = store.getState().sseTask.tasks.find((t) => t.id === id);
+      if (task?.runId != null) {
+        try {
+          await cancelSchedulerRun(task.runId);
+        } catch {
+          // 仍 abort 前端订阅；后端可能已结束
+        }
+      }
+      abortControllers.get(id)?.abort();
+      dispatch(appendTaskLog({ id, message: '已请求停止（当前日/期结束后生效）' }));
     },
     [dispatch],
   );
@@ -227,11 +222,19 @@ export default function SseTaskManager() {
             handleClose(expandedTask.id);
           }
         }}
+        onStop={() => {
+          if (expandedTask) {
+            void handleStop(expandedTask.id);
+          }
+        }}
       />
       <SseTaskDock
         tasks={tasks}
         onRestore={(id) => dispatch(restoreTask(id))}
         onClose={handleClose}
+        onStop={(id) => {
+          void handleStop(id);
+        }}
       />
     </>
   );

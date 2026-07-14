@@ -49,20 +49,20 @@ def run_trade_cal_pull_history() -> int:
     return TradeCalStrategy().pull_trade_cal_history()
 
 
-def run_suspend_pull_by_date() -> int:
-    return SuspendStrategy().pull_suspend_by_date()
+def run_suspend_pull_by_date(*, progress_queue=None) -> int:
+    return SuspendStrategy().pull_suspend_by_date(progress_queue=progress_queue)
 
 
-def run_kline_pull_daily_by_date_range() -> int:
-    return KlineStrategy().pull_kline_daily_by_date_range()
+def run_kline_pull_daily_by_date_range(*, progress_queue=None) -> int:
+    return KlineStrategy().pull_kline_daily_by_date_range(progress_queue=progress_queue)
 
 
-def run_kline_pull_adj_factor_by_date_range() -> int:
-    return KlineStrategy().pull_kline_adj_factor_by_date_range()
+def run_kline_pull_adj_factor_by_date_range(*, progress_queue=None) -> int:
+    return KlineStrategy().pull_kline_adj_factor_by_date_range(progress_queue=progress_queue)
 
 
-def run_kline_pull_stk_limit_by_date_range() -> int:
-    return KlineStrategy().pull_kline_stk_limit_by_date_range()
+def run_kline_pull_stk_limit_by_date_range(*, progress_queue=None) -> int:
+    return KlineStrategy().pull_kline_stk_limit_by_date_range(progress_queue=progress_queue)
 
 
 def run_daily_basic_pull_by_date_range() -> int:

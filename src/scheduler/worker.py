@@ -9,6 +9,7 @@ import sys
 import time
 
 from src.scheduler.engine import SchedulerEngine
+from src.service.scheduler.schedule_run_service import ScheduleRunService
 
 logging.basicConfig(
     level=logging.INFO,
@@ -25,6 +26,9 @@ def main() -> None:
         )
         sys.exit(1)
     engine = SchedulerEngine()
+    abandoned = ScheduleRunService().abandon_orphan_runs()
+    if abandoned:
+        logger.warning("abandoned %s orphan schedule_run(s) left as running", abandoned)
     engine.start()
     logger.info("quantus-scheduler running; Ctrl+C to stop")
 

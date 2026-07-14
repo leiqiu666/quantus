@@ -72,3 +72,12 @@ export function listSchedulerRuns(params?: {
 export function getSchedulerRun(runId: number): Promise<ScheduleRunItem> {
   return requestJson<ScheduleRunItem>(`${PREFIX}/runs/${runId}`);
 }
+
+export function cancelSchedulerRun(runId: number): Promise<{
+  ok: boolean;
+  run_id: number;
+  live_signal: boolean;
+  message: string;
+}> {
+  return requestJson(`${PREFIX}/runs/${runId}/cancel`, { method: 'POST' });
+}

@@ -330,8 +330,14 @@ def validate_command_keys(command_keys: list[str]) -> None:
         raise ValueError(f"unknown command_key: {', '.join(unknown)}")
 
 
-def run_command(command_key: str) -> int | None:
-    return get_command_spec(command_key).runner()
+def run_command(command_key: str, *, progress_queue=None) -> int | None:
+    runner = get_command_spec(command_key).runner
+    if progress_queue is None:
+        return runner()
+    try:
+        return runner(progress_queue=progress_queue)
+    except TypeError:
+        return runner()
 
 
 def get_menu_handler(command_key: str) -> CommandRunner:

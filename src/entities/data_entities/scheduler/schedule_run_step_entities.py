@@ -13,7 +13,7 @@ class ScheduleRunStepEntities(Base):
     run_id = Column(Integer, nullable=False, comment="schedule_run.id")
     command_key = Column(String(64), nullable=False, comment="ETL 命令键")
     sort_order = Column(Integer, nullable=False, default=0, comment="串行顺序")
-    status = Column(String(16), nullable=False, comment="success / failed / skipped")
+    status = Column(String(16), nullable=False, comment="pending / running / success / failed / cancelled")
     saved_count = Column(Integer, nullable=True, comment="写入条数")
     message = Column(Text, nullable=True, comment="摘要")
     started_at = Column(DateTime, nullable=True, comment="开始时间")

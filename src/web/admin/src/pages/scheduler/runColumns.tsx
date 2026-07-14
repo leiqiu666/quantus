@@ -1,7 +1,10 @@
 import { Tag } from 'antd';
 import type { ProColumns } from '@ant-design/pro-components';
 import type { ScheduleRunItem } from '@/types/scheduler';
-import { formatScheduleRunStatus } from '@/types/scheduler';
+import {
+  formatScheduleRunStatus,
+  formatScheduleTriggeredBy,
+} from '@/types/scheduler';
 import { formatDateTime } from '@/utils/datetime';
 
 const statusColor: Record<string, string> = {
@@ -10,12 +13,30 @@ const statusColor: Record<string, string> = {
   partial: 'orange',
   running: 'blue',
   skipped: 'default',
+  cancelled: 'default',
+};
+
+const triggeredByColor: Record<string, string> = {
+  cron: 'default',
+  admin: 'blue',
+  gap_fill: 'cyan',
+  gap_fill_row: 'cyan',
 };
 
 export const scheduleRunColumns: ProColumns<ScheduleRunItem>[] = [
   { title: 'Run ID', dataIndex: 'run_id', width: 80, search: false },
   { title: '任务', dataIndex: 'job_key', width: 160, search: false },
-  { title: '触发', dataIndex: 'triggered_by', width: 80, search: false },
+  {
+    title: '触发',
+    dataIndex: 'triggered_by',
+    width: 90,
+    search: false,
+    render: (_, row) => (
+      <Tag color={triggeredByColor[row.triggered_by] ?? 'default'}>
+        {formatScheduleTriggeredBy(row.triggered_by)}
+      </Tag>
+    ),
+  },
   {
     title: '状态',
     dataIndex: 'status',

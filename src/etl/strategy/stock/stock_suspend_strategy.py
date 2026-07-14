@@ -11,6 +11,7 @@ from src.etl.extract.local.stock.stock_suspend_local_extract import SuspendLocal
 from src.etl.extract.local.stock.stock_trade_calendar_local_extract import TradeCalLocalExtract
 from src.etl.strategy.stock.stock_trade_calendar_strategy import TradeCalStrategy
 from src.etl.workflow.stock.stock_suspend_workflow import SuspendWorkflow
+from src.scheduler.cancel import raise_if_progress_cancelled
 
 
 class SuspendStrategy:
@@ -76,6 +77,7 @@ class SuspendStrategy:
         total_saved = 0
         if progress_queue is not None:
             for i, td in enumerate(open_dates, 1):
+                raise_if_progress_cancelled(progress_queue)
                 n = self.suspend_workflow.pull_suspend_by_date(td)
                 total_saved += n
                 progress_queue.put({

@@ -1,14 +1,18 @@
 import type { AppDispatch } from '@/store';
+import { store } from '@/store';
 import {
   appendTaskLog,
-  setTaskError,
+  completeSequenceStep,
+  failSequenceStep,
+  setTaskRunId,
   setTaskRunning,
   setTaskTotal,
+  updateScheduleCommandProgress,
   updateTaskProgress,
 } from '@/store/slices/sseTaskSlice';
-import type { SseTaskMode } from '@/store/slices/sseTaskSlice';
+import type { SseTaskMode, SseTaskStep } from '@/store/slices/sseTaskSlice';
 import { FINANCIAL_SSE_ENDPOINTS } from '@/services/financial';
-import { ETL_SSE_RUN_URL } from '@/services/etlSse';
+import { ETL_SSE_RUN_SEQUENCE_URL, ETL_SSE_RUN_URL } from '@/services/etlSse';
 import { buildSchedulerJobRunUrl } from '@/services/scheduler';
 import { consumeSsePost } from '@/utils/sse-client';
 
@@ -25,6 +29,10 @@ export interface EtlSseRunParams {
   jobKey?: string;
   startDate: string;
   endDate?: string;
+  name?: string;
+  dashboardGroupId?: string;
+  dashboardDateKey?: string;
+  steps?: SseTaskStep[];
   backtest?: {
     backtestMode: 'single' | 'combo';
     factorName?: string;
@@ -41,13 +49,16 @@ export interface ExecuteEtlSseOptions extends EtlSseRunParams {
   taskId: string;
   dispatch: AppDispatch;
   signal: AbortSignal;
-  /** 行级顺序任务：子步骤进度只写日志，不更新总进度条 */
+  /** 行级顺序任务：子步骤进度只写日志，不更新总进度条（legacy；后端串行后少用） */
   logSubProgressOnly?: boolean;
 }
 
 function resolveUrl(mode: SseTaskMode, taskKey: string, jobKey?: string): string {
   if (mode === 'schedule_job') {
     return buildSchedulerJobRunUrl(jobKey ?? taskKey);
+  }
+  if (mode === 'row_sequence') {
+    return ETL_SSE_RUN_SEQUENCE_URL;
   }
   if (mode === 'report_history') {
     return REPORT_HISTORY_URL[taskKey];
@@ -58,6 +69,21 @@ function resolveUrl(mode: SseTaskMode, taskKey: string, jobKey?: string): string
 function resolveBody(params: EtlSseRunParams): Record<string, unknown> {
   if (params.mode === 'schedule_job') {
     return {};
+  }
+  if (params.mode === 'row_sequence') {
+    return {
+      name: params.name,
+      dashboard_group_id: params.dashboardGroupId,
+      dashboard_date_key: params.dashboardDateKey,
+      steps: (params.steps ?? []).map((s) => ({
+        task_key: s.taskKey,
+        label: s.label,
+        start_date: s.startDate,
+        end_date: s.endDate ?? s.startDate,
+        column_key: s.columnKey,
+        threshold: s.threshold,
+      })),
+    };
   }
   if (params.mode === 'report_history') {
     return { start_date: params.startDate };
@@ -122,12 +148,41 @@ export function executeEtlSseStream(options: ExecuteEtlSseOptions): Promise<void
           finish(() => reject(new Error(event.error)));
           return;
         }
+        if (typeof event.run_id === 'number') {
+          dispatch(setTaskRunId({ id: taskId, runId: event.run_id }));
+          dispatch(
+            appendTaskLog({
+              id: taskId,
+              message: `执行记录 #${event.run_id}`,
+            }),
+          );
+        }
         if (event.status === 'started') {
           dispatch(setTaskRunning(taskId));
           dispatch(appendTaskLog({ id: taskId, message: '连接已建立' }));
           return;
         }
         if (typeof event.log === 'string') {
+          if (
+            params.mode === 'row_sequence' &&
+            event.log.startsWith('错误 · ')
+          ) {
+            const m = event.log.match(/^错误 · (.+)：([\s\S]+)$/);
+            if (m) {
+              const stepIndex =
+                store.getState().sseTask.tasks.find((t) => t.id === taskId)
+                  ?.sequenceStepIndex ?? 0;
+              dispatch(
+                failSequenceStep({
+                  id: taskId,
+                  stepIndex,
+                  label: m[1],
+                  message: m[2],
+                }),
+              );
+              return;
+            }
+          }
           dispatch(appendTaskLog({ id: taskId, message: event.log }));
           return;
         }
@@ -135,13 +190,29 @@ export function executeEtlSseStream(options: ExecuteEtlSseOptions): Promise<void
           if (!logSubProgressOnly) {
             dispatch(setTaskTotal({ id: taskId, total: event.total }));
           }
+          const msg =
+            params.mode === 'schedule_job'
+              ? `共 ${event.total} 条命令待执行`
+              : params.mode === 'row_sequence'
+                ? `共 ${event.total} 列待补位`
+                : `共 ${event.total} 步待处理`;
+          dispatch(appendTaskLog({ id: taskId, message: msg }));
+          return;
+        }
+        if (
+          (params.mode === 'schedule_job' || params.mode === 'row_sequence') &&
+          typeof event.cmd_index === 'number' &&
+          typeof event.cmd_total === 'number' &&
+          typeof event.cmd_label === 'string' &&
+          typeof event.cmd_pct === 'number'
+        ) {
           dispatch(
-            appendTaskLog({
+            updateScheduleCommandProgress({
               id: taskId,
-              message:
-                params.mode === 'schedule_job'
-                  ? `共 ${event.total} 条命令待执行`
-                  : `共 ${event.total} 步待处理`,
+              cmdIndex: event.cmd_index,
+              cmdTotal: event.cmd_total,
+              cmdLabel: event.cmd_label,
+              cmdPct: event.cmd_pct,
             }),
           );
           return;
@@ -153,6 +224,19 @@ export function executeEtlSseStream(options: ExecuteEtlSseOptions): Promise<void
           typeof event.saved === 'number'
         ) {
           const saved = event.saved;
+          if (params.mode === 'row_sequence') {
+            dispatch(
+              completeSequenceStep({
+                id: taskId,
+                stepIndex: event.index - 1,
+                message:
+                  saved > 0
+                    ? `第 ${event.index}/${event.total} 步 ${event.period}，写入 ${saved} 条`
+                    : `${event.period} 完成`,
+              }),
+            );
+            return;
+          }
           const logMessage =
             params.mode === 'schedule_job'
               ? saved > 0
@@ -178,6 +262,13 @@ export function executeEtlSseStream(options: ExecuteEtlSseOptions): Promise<void
           return;
         }
         if (event.done === true) {
+          if (event.status === 'cancelled') {
+            const msg =
+              typeof event.message === 'string' ? event.message : '任务已停止';
+            dispatch(appendTaskLog({ id: taskId, message: msg }));
+            finish(() => reject(new Error('任务已停止')));
+            return;
+          }
           const msg =
             typeof event.message === 'string'
               ? event.message

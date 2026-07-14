@@ -15,6 +15,7 @@ interface SseTaskDockProps {
   tasks: SseTask[];
   onRestore: (id: string) => void;
   onClose: (id: string) => void;
+  onStop?: (id: string) => void;
 }
 
 function DockStatusIcon({ task }: { task: SseTask }) {
@@ -58,7 +59,12 @@ function dockSubtitle(task: SseTask): string | null {
   return null;
 }
 
-export default function SseTaskDock({ tasks, onRestore, onClose }: SseTaskDockProps) {
+export default function SseTaskDock({
+  tasks,
+  onRestore,
+  onClose,
+  onStop,
+}: SseTaskDockProps) {
   const dockTasks = tasks.filter((t) => t.minimized);
   if (dockTasks.length === 0) {
     return null;
@@ -72,6 +78,12 @@ export default function SseTaskDock({ tasks, onRestore, onClose }: SseTaskDockPr
           task.status === 'success' &&
           task.flashState === 'success' &&
           !task.slidingOut;
+        const isRunning =
+          task.status === 'running' ||
+          task.status === 'pending' ||
+          task.status === 'queued';
+        const canStop =
+          isRunning && task.runId != null && typeof onStop === 'function';
 
         return (
           <Card
@@ -123,6 +135,18 @@ export default function SseTaskDock({ tasks, onRestore, onClose }: SseTaskDockPr
                     className="!mb-0 !mt-1"
                   />
                 )}
+                {canStop ? (
+                  <button
+                    type="button"
+                    className="mt-1 text-xs text-red-500 hover:text-red-600"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onStop(task.id);
+                    }}
+                  >
+                    停止
+                  </button>
+                ) : null}
               </div>
             </div>
           </Card>

@@ -1,11 +1,11 @@
 from datetime import datetime
-from typing import Annotated
+from typing import Annotated, Callable
 
 from fastapi import APIRouter, Body, Depends
 from fastapi.responses import StreamingResponse
 
 from src.common.function import report_period_page_bounds
-from src.common.sse import sse_streaming_response
+from src.common.sse import sse_event_stream, SSE_HEADERS
 from src.api.deps import verify_api_token
 from src.api.schemas.financial_report import (
     IncomeHistoryInitRequest,
@@ -14,6 +14,7 @@ from src.api.schemas.financial_report import (
 )
 from src.service.financial.financial_report_service import ReportService
 from src.etl.strategy.financial.financial_report_strategy import ReportStrategy
+from src.service.scheduler.gap_fill_run_service import run_tracked_gap_fill
 
 router = APIRouter(
     prefix="/financial",
@@ -27,11 +28,36 @@ _SSE_DESC_COMMON = (
     " 首帧多为 {\"status\":\"started\"}；随后 {\"status\":\"running\",\"total\"}；"
     "每期进度：index、total、period、saved；"
     "成功结束帧：done=true 与 periods；失败：error。"
-    " 若工具长时间无输出，多为在第一期 ETL 完成前阻塞；请拉长超时或换 curl -N 验证。"
-    " SSE/线程模板见 src.common.sse：队列消费使用异步轮询而非默认线程池阻塞读，"
-    "避免断连占满线程池导致其它请求饿死。"
-    " 任务可能耗时很长，请在 Nginx 等代理上关闭缓冲（如 proxy_buffering off）并放宽 proxy_read_timeout。"
+    " 执行写入 schedule_run（triggered_by=gap_fill），可在执行历史查看/停止。"
 )
+
+
+def _history_sse(
+    *,
+    task_key: str,
+    label: str,
+    start_date: str,
+    strategy_method: Callable,
+    thread_name: str,
+) -> StreamingResponse:
+    def _worker(q) -> None:
+        run_tracked_gap_fill(
+            progress_queue=q,
+            task_key=task_key,
+            label=label,
+            start_date=start_date,
+            end_date=None,
+            triggered_by="gap_fill",
+            execute=lambda bridge: strategy_method(
+                start_date, progress_queue=bridge,
+            ),
+        )
+
+    return StreamingResponse(
+        sse_event_stream(_worker, thread_name=thread_name),
+        media_type="text/event-stream",
+        headers=SSE_HEADERS,
+    )
 
 
 @router.post(
@@ -52,9 +78,11 @@ async def report_income_history_init(
         ),
     ],
 ) -> StreamingResponse:
-    return sse_streaming_response(
-        ReportStrategy().report_income_history_init,
-        body.start_date,
+    return _history_sse(
+        task_key="report_income_history_init",
+        label="【财报】利润表全量历史入库",
+        start_date=body.start_date,
+        strategy_method=ReportStrategy().report_income_history_init,
         thread_name="report_income_history_init",
     )
 
@@ -76,9 +104,11 @@ async def report_balance_history_init(
         ),
     ],
 ) -> StreamingResponse:
-    return sse_streaming_response(
-        ReportStrategy().report_balance_history_init,
-        body.start_date,
+    return _history_sse(
+        task_key="report_balance_history_init",
+        label="【财报】资产负债表全量历史入库",
+        start_date=body.start_date,
+        strategy_method=ReportStrategy().report_balance_history_init,
         thread_name="report_balance_history_init",
     )
 
@@ -100,9 +130,11 @@ async def report_cashflow_history_init(
         ),
     ],
 ) -> StreamingResponse:
-    return sse_streaming_response(
-        ReportStrategy().report_cashflow_history_init,
-        body.start_date,
+    return _history_sse(
+        task_key="report_cashflow_history_init",
+        label="【财报】现金流量表全量历史入库",
+        start_date=body.start_date,
+        strategy_method=ReportStrategy().report_cashflow_history_init,
         thread_name="report_cashflow_history_init",
     )
 
@@ -124,11 +156,14 @@ async def report_indicator_history_init(
         ),
     ],
 ) -> StreamingResponse:
-    return sse_streaming_response(
-        ReportStrategy().report_indicator_history_init,
-        body.start_date,
+    return _history_sse(
+        task_key="report_indicator_history_init",
+        label="【财报】财务指标全量历史入库",
+        start_date=body.start_date,
+        strategy_method=ReportStrategy().report_indicator_history_init,
         thread_name="report_indicator_history_init",
     )
+
 
 @router.post(
     "/report/period-list",

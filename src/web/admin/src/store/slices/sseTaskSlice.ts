@@ -57,6 +57,7 @@ export interface SseTask {
   flashState: SseTaskFlashState;
   slidingOut: boolean;
   backtest?: BacktestSseParams;
+  runId?: number;
 }
 
 interface SseTaskState {
@@ -70,6 +71,19 @@ const initialState: SseTaskState = {
 function formatLog(message: string): string {
   const ts = new Date().toLocaleTimeString('zh-CN', { hour12: false });
   return `[${ts}] ${message}`;
+}
+
+function stripLogTs(log: string): string {
+  return log.replace(/^\[[^\]]+\]\s*/, '');
+}
+
+function findLastLogIndex(logs: string[], pred: (bare: string) => boolean): number {
+  for (let i = logs.length - 1; i >= 0; i -= 1) {
+    if (pred(stripLogTs(logs[i]))) {
+      return i;
+    }
+  }
+  return -1;
 }
 
 function baseTaskFields(
@@ -235,6 +249,15 @@ const sseTaskSlice = createSlice({
         task.progress = 0;
       }
     },
+    setTaskRunId(
+      state,
+      action: PayloadAction<{ id: string; runId: number }>,
+    ) {
+      const task = state.tasks.find((t) => t.id === action.payload.id);
+      if (task) {
+        task.runId = action.payload.runId;
+      }
+    },
     updateTaskProgress(
       state,
       action: PayloadAction<{
@@ -255,12 +278,64 @@ const sseTaskSlice = createSlice({
       task.currentIndex = index;
       task.total = total;
       task.progress = total > 0 ? Math.round((index / total) * 100) : 0;
-      task.logs.push(
-        formatLog(
-          logMessage ??
-            `第 ${index}/${total} 期 ${period} 入库 ${saved} 条`,
-        ),
-      );
+      const message =
+        logMessage ?? `第 ${index}/${total} 期 ${period} 入库 ${saved} 条`;
+      // 调度：用完成日志替换同一步的百分比行，并刷新时间戳
+      if (task.mode === 'schedule_job') {
+        const prefix = `第 ${index}/${total} 步 ${period}`;
+        const found = findLastLogIndex(task.logs, (bare) => bare.startsWith(prefix));
+        const line = formatLog(message);
+        if (found >= 0) {
+          task.logs[found] = line;
+        } else {
+          task.logs.push(line);
+        }
+        return;
+      }
+      task.logs.push(formatLog(message));
+    },
+    /** 调度命令内部进度：就地更新「第 N/M 步 label XX%」，100% 时刷新时间 */
+    updateScheduleCommandProgress(
+      state,
+      action: PayloadAction<{
+        id: string;
+        cmdIndex: number;
+        cmdTotal: number;
+        cmdLabel: string;
+        cmdPct: number;
+      }>,
+    ) {
+      const { id, cmdIndex, cmdTotal, cmdLabel, cmdPct } = action.payload;
+      const task = state.tasks.find((t) => t.id === id);
+      if (!task) {
+        return;
+      }
+      task.status = 'running';
+      task.currentIndex = Math.max(0, cmdIndex - 1);
+      task.total = cmdTotal;
+      const pct = Math.min(100, Math.max(0, cmdPct));
+      // 总进度条 = 已完成命令 + 当前命令内百分比
+      const frac = (Math.max(0, cmdIndex - 1) + pct / 100) / Math.max(cmdTotal, 1);
+      task.progress = Math.round(frac * 100);
+      task.currentStepLabel = cmdLabel;
+
+      if (task.mode === 'row_sequence') {
+        task.sequenceStepIndex = Math.max(0, cmdIndex - 1);
+      }
+
+      const prefix = `第 ${cmdIndex}/${cmdTotal} 步 ${cmdLabel}`;
+      const message = `${prefix} ${pct}%`;
+      const found = findLastLogIndex(task.logs, (bare) => bare.startsWith(prefix));
+      if (found >= 0) {
+        if (pct >= 100) {
+          task.logs[found] = formatLog(message);
+        } else {
+          const oldTs = task.logs[found].match(/^\[([^\]]+)\]/)?.[1];
+          task.logs[found] = oldTs ? `[${oldTs}] ${message}` : formatLog(message);
+        }
+      } else {
+        task.logs.push(formatLog(message));
+      }
     },
     appendTaskLog(
       state,
@@ -395,7 +470,9 @@ export const {
   failSequenceStep,
   finishRowSequenceTask,
   setTaskTotal,
+  setTaskRunId,
   updateTaskProgress,
+  updateScheduleCommandProgress,
   appendTaskLog,
   setTaskSuccess,
   setTaskError,

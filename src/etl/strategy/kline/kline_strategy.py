@@ -15,6 +15,7 @@ from src.etl.extract.local.stock.stock_suspend_local_extract import SuspendLocal
 from src.etl.extract.local.stock.stock_trade_calendar_local_extract import TradeCalLocalExtract
 from src.etl.strategy.stock.stock_trade_calendar_strategy import TradeCalStrategy
 from src.etl.workflow.kline.kline_workflow import KlineWorkflow
+from src.scheduler.cancel import raise_if_progress_cancelled
 from src.service.stock.stock_base_service import StockBaseService
 
 
@@ -242,6 +243,7 @@ class KlineStrategy:
         if progress_queue is not None:
             progress_queue.put({"status": "running", "total": len(trade_dates)})
             for i, td in enumerate(trade_dates, 1):
+                raise_if_progress_cancelled(progress_queue)
                 n = workflow_method(trade_date=td)
                 total_saved += n
                 progress_queue.put({

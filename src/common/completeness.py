@@ -252,6 +252,9 @@ class CompletenessEngine:
         total = 0
         if progress_queue is not None:
             for i, dk in enumerate(missing, 1):
+                from src.scheduler.cancel import raise_if_progress_cancelled
+
+                raise_if_progress_cancelled(progress_queue)
                 saved = _pull_one(dk)
                 total += saved
                 progress_queue.put({
@@ -351,6 +354,10 @@ class CompletenessEngine:
         )
         row_iter = stock_rows if progress_queue is not None else pbar
         for i, row in enumerate(row_iter, 1):
+            if progress_queue is not None:
+                from src.scheduler.cancel import raise_if_progress_cancelled
+
+                raise_if_progress_cancelled(progress_queue)
             ts_code = getattr(row, "ts_code", None)
             if not ts_code:
                 continue
@@ -449,6 +456,9 @@ class CompletenessEngine:
         if progress_queue is not None:
             progress_queue.put({"status": "running", "total": len(flat_tasks) or 1})
             for step, task in enumerate(flat_tasks, 1):
+                from src.scheduler.cancel import raise_if_progress_cancelled
+
+                raise_if_progress_cancelled(progress_queue)
                 idx_code, task_start, task_end = task
                 n = self.config.pull_by_index(
                     index_code=idx_code,

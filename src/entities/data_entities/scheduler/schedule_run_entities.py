@@ -11,8 +11,8 @@ class ScheduleRunEntities(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True, comment="ID")
     job_id = Column(Integer, nullable=True, comment="schedule_job.id")
-    triggered_by = Column(String(16), nullable=False, comment="cron / manual / admin")
-    status = Column(String(16), nullable=False, comment="running / success / failed / partial / skipped")
+    triggered_by = Column(String(16), nullable=False, comment="cron / admin / gap_fill / gap_fill_row")
+    status = Column(String(16), nullable=False, comment="running / success / failed / partial / skipped / cancelled")
     started_at = Column(DateTime, nullable=False, comment="开始时间")
     finished_at = Column(DateTime, nullable=True, comment="结束时间")
     error_message = Column(Text, nullable=True, comment="错误摘要")

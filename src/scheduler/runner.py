@@ -9,7 +9,9 @@ from datetime import datetime
 
 from src.model.scheduler.schedule_job_model import ScheduleJobModel
 from src.model.scheduler.schedule_run_model import ScheduleRunModel
+from src.scheduler import cancel as cancel_ctl
 from src.scheduler.command_registry import get_command_spec, run_command
+from src.scheduler.progress_bridge import CommandProgressBridge
 from src.service.stock.stock_trade_cal_service import TradeCalService
 
 logger = logging.getLogger(__name__)
@@ -120,6 +122,7 @@ def execute_job(
         status="running",
         started_at=_now(),
     )
+    cancel_ctl.register_run(run.id)
     _notify_run_created(
         run.id,
         run_id_out=run_id_out,
@@ -127,74 +130,142 @@ def execute_job(
     )
 
     failed = 0
+    cancelled = False
     first_error: str | None = None
     total = len(commands)
-    _sse_put(progress_queue, {"status": "running", "total": total})
+    _sse_put(progress_queue, {"status": "running", "total": total, "run_id": run.id})
 
-    for idx, cmd in enumerate(commands, start=1):
-        step = run_model.create_step(
-            run_id=run.id,
-            command_key=cmd.command_key,
-            sort_order=cmd.sort_order,
-            status="running",
-            started_at=_now(),
-        )
-        spec = get_command_spec(cmd.command_key)
-        try:
-            saved = run_command(cmd.command_key)
-            message = f"完成，写入 {saved} 条" if saved is not None else "完成"
-            run_model.update_step(
-                step.id,
-                status="success",
-                saved_count=saved,
-                message=message,
-                finished_at=_now(),
+    try:
+        for idx, cmd in enumerate(commands, start=1):
+            if cancel_ctl.is_cancel_requested(run.id):
+                cancelled = True
+                break
+
+            step = run_model.create_step(
+                run_id=run.id,
+                command_key=cmd.command_key,
+                sort_order=cmd.sort_order,
+                status="running",
+                started_at=_now(),
             )
-            _sse_put(progress_queue, {
-                "index": idx,
-                "total": total,
-                "period": spec.label,
-                "saved": saved if saved is not None else 0,
-            })
-        except Exception as exc:
-            failed += 1
-            err = str(exc)
-            if first_error is None:
-                first_error = err
-            logger.exception("command %s failed in job %s", cmd.command_key, job.job_key)
-            run_model.update_step(
-                step.id,
-                status="failed",
-                message=err,
-                finished_at=_now(),
+            spec = get_command_spec(cmd.command_key)
+            bridge = CommandProgressBridge(
+                progress_queue,
+                cmd_index=idx,
+                cmd_total=total,
+                cmd_label=spec.label,
+                run_id=run.id,
             )
-            _sse_put(progress_queue, {
-                "index": idx,
-                "total": total,
-                "period": spec.label,
-                "saved": 0,
-            })
+            # 进入命令即推 0%，Admin 立刻显示「第 N/M 步 label 0%」
+            bridge.put({"status": "running", "total": 1})
+            try:
+                saved = run_command(cmd.command_key, progress_queue=bridge)
+                if cancel_ctl.is_cancel_requested(run.id):
+                    run_model.cancel_run(
+                        run.id,
+                        finished_at=_now(),
+                        error_message="用户停止",
+                    )
+                    run_model.update_step(
+                        step.id,
+                        status="cancelled",
+                        saved_count=saved,
+                        message="用户停止",
+                        finished_at=_now(),
+                    )
+                    _sse_put(progress_queue, {
+                        "index": idx,
+                        "total": total,
+                        "period": spec.label,
+                        "saved": saved if saved is not None else 0,
+                        "log": f"第 {idx}/{total} 步 {spec.label} 已停止",
+                    })
+                    cancelled = True
+                    break
+                message = f"完成，写入 {saved} 条" if saved is not None else "完成"
+                run_model.update_step(
+                    step.id,
+                    status="success",
+                    saved_count=saved,
+                    message=message,
+                    finished_at=_now(),
+                )
+                _sse_put(progress_queue, {
+                    "index": idx,
+                    "total": total,
+                    "period": spec.label,
+                    "saved": saved if saved is not None else 0,
+                })
+            except cancel_ctl.CommandCancelled:
+                cancelled = True
+                run_model.cancel_run(
+                    run.id,
+                    finished_at=_now(),
+                    error_message="用户停止",
+                )
+                run_model.update_step(
+                    step.id,
+                    status="cancelled",
+                    message="用户停止",
+                    finished_at=_now(),
+                )
+                _sse_put(progress_queue, {
+                    "log": f"第 {idx}/{total} 步 {spec.label} 已停止",
+                })
+                break
+            except Exception as exc:
+                failed += 1
+                err = str(exc)
+                if first_error is None:
+                    first_error = err
+                logger.exception("command %s failed in job %s", cmd.command_key, job.job_key)
+                run_model.update_step(
+                    step.id,
+                    status="failed",
+                    message=err,
+                    finished_at=_now(),
+                )
+                _sse_put(progress_queue, {
+                    "index": idx,
+                    "total": total,
+                    "period": spec.label,
+                    "saved": 0,
+                })
 
-    if failed == 0:
-        final_status = "success"
-        done_msg = f"任务完成，共 {total} 条命令"
-    elif failed == len(commands):
-        final_status = "failed"
-        done_msg = first_error or "全部命令失败"
-    else:
-        final_status = "partial"
-        done_msg = f"部分完成：{total - failed}/{total} 成功"
+        if cancelled:
+            # cancel_run 可能已由 API 写过；此处兜底保证终态
+            current = run_model.get_run(run.id)
+            if current is not None and current.status == "running":
+                run_model.cancel_run(
+                    run.id,
+                    finished_at=_now(),
+                    error_message="用户停止",
+                )
+            final_status = "cancelled"
+            done_msg = "任务已停止"
+        elif failed == 0:
+            final_status = "success"
+            done_msg = f"任务完成，共 {total} 条命令"
+        elif failed == len(commands):
+            final_status = "failed"
+            done_msg = first_error or "全部命令失败"
+        else:
+            final_status = "partial"
+            done_msg = f"部分完成：{total - failed}/{total} 成功"
 
-    run_model.finish_run(
-        run.id,
-        status=final_status,
-        finished_at=_now(),
-        error_message=first_error,
-    )
-    _sse_put(progress_queue, {
-        "done": True,
-        "message": done_msg,
-        "run_id": run.id,
-        "status": final_status,
-    })
-    return run.id
+        if not cancelled:
+            run_model.finish_run(
+                run.id,
+                status=final_status,
+                finished_at=_now(),
+                error_message=first_error,
+            )
+        _sse_put(progress_queue, {
+            "done": True,
+            "message": done_msg,
+            "run_id": run.id,
+            "status": final_status,
+        })
+        return run.id
+    finally:
+        cancel_ctl.unregister_run(run.id)

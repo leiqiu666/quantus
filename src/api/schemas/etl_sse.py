@@ -38,3 +38,33 @@ class EtlSseRunRequest(BaseModel):
         if self.end_date and self.start_date > self.end_date:
             raise ValueError("start_date 不能大于 end_date")
         return self
+
+
+class EtlSseSequenceStep(BaseModel):
+    task_key: str = Field(description="SSE 任务键")
+    label: str = Field(description="列展示名")
+    start_date: str = Field(pattern=r"^\d{8}$")
+    end_date: str | None = Field(default=None, pattern=r"^\d{8}$")
+    column_key: str | None = Field(
+        default=None, description="看板列 key，用于步后完整性复核"
+    )
+    threshold: float | None = Field(
+        default=None, description="完整性阈值，默认 0.95"
+    )
+
+    @model_validator(mode="after")
+    def validate_range(self) -> "EtlSseSequenceStep":
+        if self.end_date and self.start_date > self.end_date:
+            raise ValueError("start_date 不能大于 end_date")
+        return self
+
+
+class EtlSseSequenceRequest(BaseModel):
+    steps: list[EtlSseSequenceStep] = Field(min_length=1)
+    name: str | None = Field(default=None, description="展示用任务名")
+    dashboard_group_id: str | None = Field(
+        default=None, description="看板大类，步后完整性复核"
+    )
+    dashboard_date_key: str | None = Field(
+        default=None, description="看板行日期 YYYYMMDD"
+    )

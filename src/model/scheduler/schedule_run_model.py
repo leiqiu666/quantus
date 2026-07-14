@@ -84,6 +84,89 @@ class ScheduleRunModel:
         finally:
             session.close()
 
+    def abandon_orphan_runs(
+        self,
+        *,
+        finished_at: datetime | None = None,
+        error_message: str = "进程退出，残留执行已标记中断",
+    ) -> int:
+        """将所有 status=running 的 run/step 标记为中断（进程重启后清理）。"""
+        when = finished_at or datetime.now()
+        session = self._db.get_session()
+        try:
+            runs = (
+                session.query(ScheduleRunEntities)
+                .filter(ScheduleRunEntities.status == "running")
+                .all()
+            )
+            if not runs:
+                return 0
+            run_ids = [r.id for r in runs]
+            for run in runs:
+                run.status = "cancelled"
+                run.finished_at = when
+                run.error_message = error_message
+            steps = (
+                session.query(ScheduleRunStepEntities)
+                .filter(
+                    ScheduleRunStepEntities.run_id.in_(run_ids),
+                    ScheduleRunStepEntities.status == "running",
+                )
+                .all()
+            )
+            for step in steps:
+                step.status = "cancelled"
+                step.finished_at = when
+                step.message = error_message
+            session.commit()
+            return len(runs)
+        except Exception:
+            session.rollback()
+            raise
+        finally:
+            session.close()
+
+    def cancel_run(
+        self,
+        run_id: int,
+        *,
+        finished_at: datetime | None = None,
+        error_message: str = "用户停止",
+    ) -> bool:
+        """将指定 run 及其 running step 标记为 cancelled。已结束则返回 False。"""
+        when = finished_at or datetime.now()
+        session = self._db.get_session()
+        try:
+            run = (
+                session.query(ScheduleRunEntities)
+                .filter(ScheduleRunEntities.id == run_id)
+                .first()
+            )
+            if run is None or run.status != "running":
+                return False
+            run.status = "cancelled"
+            run.finished_at = when
+            run.error_message = error_message
+            steps = (
+                session.query(ScheduleRunStepEntities)
+                .filter(
+                    ScheduleRunStepEntities.run_id == run_id,
+                    ScheduleRunStepEntities.status == "running",
+                )
+                .all()
+            )
+            for step in steps:
+                step.status = "cancelled"
+                step.finished_at = when
+                step.message = error_message
+            session.commit()
+            return True
+        except Exception:
+            session.rollback()
+            raise
+        finally:
+            session.close()
+
     def list_runs(
         self,
         *,
@@ -205,5 +288,34 @@ class ScheduleRunModel:
                 .order_by(ScheduleRunStepEntities.sort_order)
                 .all()
             )
+        finally:
+            session.close()
+
+    def first_step_meta_by_run_ids(
+        self, run_ids: list[int],
+    ) -> dict[int, tuple[str, int]]:
+        """返回 {run_id: (first_command_key, step_count)}。"""
+        if not run_ids:
+            return {}
+        session = self._db.get_session()
+        try:
+            rows = (
+                session.query(ScheduleRunStepEntities)
+                .filter(ScheduleRunStepEntities.run_id.in_(run_ids))
+                .order_by(
+                    ScheduleRunStepEntities.run_id,
+                    ScheduleRunStepEntities.sort_order,
+                )
+                .all()
+            )
+            meta: dict[int, tuple[str, int]] = {}
+            counts: dict[int, int] = {}
+            for row in rows:
+                counts[row.run_id] = counts.get(row.run_id, 0) + 1
+                if row.run_id not in meta:
+                    meta[row.run_id] = (row.command_key, 0)
+            for rid, key_count in list(meta.items()):
+                meta[rid] = (key_count[0], counts.get(rid, 0))
+            return meta
         finally:
             session.close()

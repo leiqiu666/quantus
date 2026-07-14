@@ -116,8 +116,20 @@ export const scheduleRunStatusLabels: Record<string, string> = {
   failed: '失败',
   partial: '部分成功',
   skipped: '已跳过',
+  cancelled: '已停止',
+};
+
+export const scheduleTriggeredByLabels: Record<string, string> = {
+  cron: '定时',
+  admin: '手动',
+  gap_fill: '补位',
+  gap_fill_row: '行补位',
 };
 
 export function formatScheduleRunStatus(status: string): string {
   return scheduleRunStatusLabels[status] ?? status;
+}
+
+export function formatScheduleTriggeredBy(triggeredBy: string): string {
+  return scheduleTriggeredByLabels[triggeredBy] ?? triggeredBy;
 }

@@ -180,3 +180,17 @@ def get_run(
     if item is None:
         raise HTTPException(status_code=404, detail=f"run not found: {run_id}")
     return ScheduleRunItem.model_validate(item)
+
+
+@router.post(
+    "/runs/{run_id}/cancel",
+    summary="停止执行中的任务",
+    description="标记 run 为 cancelled，并向本进程内执行线程发送停止信号（当前交易日结束后不再继续）。",
+)
+def cancel_run(
+    run_id: Annotated[int, Path(description="执行记录 ID")],
+) -> dict:
+    try:
+        return ScheduleRunService().cancel_run(run_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc

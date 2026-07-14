@@ -16,6 +16,7 @@ interface SseTaskModalProps {
   open: boolean;
   onMinimize: () => void;
   onClose: () => void;
+  onStop?: () => void;
   allTasks?: SseTask[];
 }
 
@@ -83,6 +84,7 @@ export default function SseTaskModal({
   open,
   onMinimize,
   onClose,
+  onStop,
   allTasks = [],
 }: SseTaskModalProps) {
   const logRef = useRef<HTMLDivElement>(null);
@@ -117,6 +119,9 @@ export default function SseTaskModal({
       ? (task.sequenceStepIndex ?? 0) + 1
       : task.currentIndex;
 
+  const canStop =
+    isRunning && task.runId != null && typeof onStop === 'function';
+
   return (
     <Modal
       title={
@@ -140,6 +145,11 @@ export default function SseTaskModal({
               </Text>,
             ]
           : [
+              canStop ? (
+                <Button key="stop" danger onClick={onStop}>
+                  停止
+                </Button>
+              ) : null,
               <Button key="minimize" onClick={onMinimize}>
                 最小化
               </Button>,
