@@ -10,7 +10,7 @@ class SuspendEntities(Base):
     id = Column(Integer, primary_key=True, autoincrement=True, comment="ID")
     ts_code = Column(String(20), comment="股票代码")
     trade_date = Column(String(8), comment="停复牌日期")
-    suspend_timing = Column(String(2), comment="停牌时间（S：半天/全天，R：上午/下午/全天）")
+    suspend_timing = Column(String(128), comment="日内停牌时段（可多段逗号拼接）；全天停牌为空字符串")
     suspend_type = Column(String(2), comment="停复牌类型（S：停牌，R：复牌）")
 
     __table_args__ = (

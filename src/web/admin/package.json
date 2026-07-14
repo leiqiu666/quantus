@@ -5,9 +5,9 @@
   "type": "module",
   "description": "Quantus 量化 Agent 管理后台",
   "scripts": {
-    "dev": "bash scripts/with-node.sh vite",
-    "build": "bash scripts/with-node.sh sh -c 'tsc -b && vite build'",
-    "preview": "bash scripts/with-node.sh vite preview",
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
     "lint": "eslint .",
     "typecheck": "tsc -b --noEmit"
   },

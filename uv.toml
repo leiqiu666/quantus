@@ -1,0 +1,4 @@
+# 国内默认走清华 PyPI，避免官方源过慢
+[[index]]
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+default = true

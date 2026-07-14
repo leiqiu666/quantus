@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import importlib
 import inspect
-import pkgutil
+from pathlib import Path
 from typing import Type
 
 # 不参与扫描的模块名（basename）
@@ -19,25 +19,29 @@ def _is_entity_class(cls: type) -> bool:
 
 
 def discover_all_entities() -> list[Type]:
-    """扫描 data_entities 目录，返回所有 ORM 实体类（按表名排序）。"""
+    """递归扫描 data_entities（含 financial/market 等子目录），返回全部 ORM 实体。"""
     package_name = __package__
     package = importlib.import_module(package_name)
+    root = Path(next(iter(package.__path__)))
     entities: list[Type] = []
+    seen_tables: set[str] = set()
 
-    prefix = package_name + "."
-    for _importer, modname, ispkg in pkgutil.iter_modules(package.__path__, prefix):
-        if ispkg:
+    for path in sorted(root.rglob("*.py")):
+        if path.name.startswith("_") or path.stem in _EXCLUDED_MODULES:
             continue
-        short_name = modname.rsplit(".", 1)[-1]
-        if short_name in _EXCLUDED_MODULES:
-            continue
-
+        rel = path.relative_to(root).with_suffix("")
+        modname = package_name + "." + ".".join(rel.parts)
         module = importlib.import_module(modname)
         for _name, obj in inspect.getmembers(module, inspect.isclass):
             if obj.__module__ != modname:
                 continue
-            if _is_entity_class(obj):
-                entities.append(obj)
+            if not _is_entity_class(obj):
+                continue
+            table = obj.__tablename__
+            if table in seen_tables:
+                continue
+            seen_tables.add(table)
+            entities.append(obj)
 
     entities.sort(key=lambda cls: cls.__tablename__)
     return entities

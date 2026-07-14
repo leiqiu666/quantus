@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import argparse
 import os
+import shutil
 import signal
 import subprocess
 import sys
@@ -23,6 +24,19 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 ADMIN_DIR = ROOT / "src" / "web" / "admin"
+
+
+def _resolve_cmd(cmd: list[str]) -> list[str]:
+    """Resolve argv[0] so Windows .cmd shims (pnpm/npm/uv) work without shell=True."""
+    if not cmd:
+        return cmd
+    exe = shutil.which(cmd[0])
+    if exe is None:
+        return cmd
+    # CreateProcess cannot run .cmd/.bat directly; wrap with cmd /c
+    if sys.platform == "win32" and exe.lower().endswith((".cmd", ".bat")):
+        return ["cmd", "/c", exe, *cmd[1:]]
+    return [exe, *cmd[1:]]
 
 
 @dataclass(frozen=True)
@@ -96,24 +110,37 @@ def _pipe_output(proc: subprocess.Popen[str], prefix: str) -> None:
 
 def _start(svc: Service, extra_env: dict[str, str] | None = None) -> subprocess.Popen[str]:
     env = os.environ.copy()
+    # Windows 控制台默认 GBK；统一子进程 UTF-8，避免中文异常信息乱码
+    env["PYTHONIOENCODING"] = "utf-8"
+    env["PYTHONUTF8"] = "1"
     env.update(svc.env)
     if extra_env:
         env.update(extra_env)
+    argv = _resolve_cmd(svc.cmd)
     print(f"→ 启动 {svc.title} ({svc.name}): {' '.join(svc.cmd)}")
     if svc.url:
         print(f"  {svc.url}")
     return subprocess.Popen(
-        svc.cmd,
+        argv,
         cwd=str(svc.cwd),
         env=env,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         text=True,
+        encoding="utf-8",
+        errors="replace",
         bufsize=1,
     )
 
 
 def main() -> int:
+    if hasattr(sys.stdout, "reconfigure"):
+        try:
+            sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+            sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+        except Exception:
+            pass
+
     parser = argparse.ArgumentParser(description="Quantus 开发态一键启动")
     parser.add_argument(
         "--only",

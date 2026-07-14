@@ -252,7 +252,7 @@ df = pro.suspend_d(suspend_type='S', trade_date='20200312')
 | `ts_code` | String(20) | TS 代码 |
 | `trade_date` | String(8) | 停复牌日期 YYYYMMDD |
 | `suspend_type` | String(1) | `S` / `R` |
-| `suspend_timing` | String(32) | 日内停牌时段；全天停牌归一化为空字符串 `""`（**不**保留 NULL，否则 ON CONFLICT 失效） |
+| `suspend_timing` | String(128) | 日内停牌时段（可多段逗号拼接，如 `09:30-10:31,13:42-14:57`）；全天停牌归一化为空字符串 `""`（**不**保留 NULL，否则 ON CONFLICT 失效） |
 
 **索引：**
 
