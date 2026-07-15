@@ -16,7 +16,7 @@ import { ProTable } from '@ant-design/pro-components';
 import {
   createFactorCombo,
   deleteFactorCombo,
-  getFactorList,
+  getFactorOptions,
   listFactorCombos,
   updateFactorCombo,
 } from '@/services/quant';
@@ -62,7 +62,7 @@ export default function FactorComboPage() {
   const [btTarget, setBtTarget] = useState<BacktestTarget | null>(null);
 
   useEffect(() => {
-    void getFactorList()
+    void getFactorOptions()
       .then(setFactors)
       .catch(() => {
         message.error('加载因子列表失败');

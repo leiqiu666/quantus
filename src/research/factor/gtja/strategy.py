@@ -8,7 +8,11 @@ from datetime import datetime
 
 from src.common.function import tqdm_iter
 from src.research.dataset.kline import KlineDataset
-from src.research.factor.gtja.catalog import list_computable_alphas, load_catalog
+from src.research.factor.gtja.catalog import (
+    list_computable_alphas,
+    load_catalog,
+    overlay_db_formulas,
+)
 from src.research.factor.gtja.engine import Gtja191Engine
 
 
@@ -51,6 +55,7 @@ class Gtja191Strategy:
                 progress_queue.put({"done": True, "saved": 0, "message": msg})
             return 0
 
+        specs = overlay_db_formulas(specs)
         total_rows = 0
         ok_factors: set[str] = set()
         n_months = len(months)

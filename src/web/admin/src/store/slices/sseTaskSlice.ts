@@ -32,6 +32,12 @@ export interface BacktestSseParams {
   slippageRate?: number;
 }
 
+/** 单因子计算 SSE（task_key=factor_compute） */
+export interface FactorComputeSseParams {
+  factorName: string;
+  force?: boolean;
+}
+
 export interface SseTask {
   id: string;
   name: string;
@@ -57,6 +63,7 @@ export interface SseTask {
   flashState: SseTaskFlashState;
   slidingOut: boolean;
   backtest?: BacktestSseParams;
+  factorCompute?: FactorComputeSseParams;
   runId?: number;
 }
 
@@ -96,6 +103,7 @@ function baseTaskFields(
     startDate: string;
     endDate?: string;
     backtest?: BacktestSseParams;
+    factorCompute?: FactorComputeSseParams;
   },
   ui: { expanded: boolean; minimized: boolean },
 ): SseTask {
@@ -108,6 +116,7 @@ function baseTaskFields(
     startDate: payload.startDate,
     endDate: payload.endDate,
     backtest: payload.backtest,
+    factorCompute: payload.factorCompute,
     status: 'queued',
     progress: 0,
     total: 0,
@@ -134,6 +143,7 @@ const sseTaskSlice = createSlice({
         startDate: string;
         endDate?: string;
         backtest?: BacktestSseParams;
+        factorCompute?: FactorComputeSseParams;
       }>,
     ) {
       state.tasks.forEach((t) => {

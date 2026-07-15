@@ -32,6 +32,10 @@ class EtlSseRunRequest(BaseModel):
     workers: int | None = Field(
         default=None, description="国泰191 月内并行进程数；默认自动探测"
     )
+    # task_key=factor_compute
+    force: bool | None = Field(
+        default=False, description="是否覆盖已有月份分区（factor_compute）"
+    )
 
     @model_validator(mode="after")
     def validate_range(self) -> "EtlSseRunRequest":

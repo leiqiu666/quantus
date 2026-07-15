@@ -1,0 +1,162 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.canvas {
+  min-height: 120px;
+  max-height: 360px;
+  overflow: auto;
+  padding: 12px 14px;
+  border: 1px solid var(--ant-color-border);
+  border-radius: 8px;
+  background: var(--ant-color-fill-quaternary);
+  cursor: text;
+  font-family: ui-monospace, Consolas, 'SF Mono', monospace;
+  outline: none;
+}
+
+.canvas:focus {
+  border-color: var(--ant-color-primary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--ant-color-primary) 20%, transparent);
+}
+
+.canvasDragOver {
+  border-color: var(--ant-color-primary);
+  background: color-mix(in srgb, var(--ant-color-primary) 8%, transparent);
+}
+
+.line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 2px 0;
+  border-left: 2px solid transparent;
+  margin-left: 0;
+}
+
+.lineNested {
+  border-left-color: color-mix(in srgb, var(--ant-color-primary) 25%, transparent);
+}
+
+.cursor {
+  width: 2px;
+  height: 22px;
+  background: var(--ant-color-primary);
+  border-radius: 1px;
+  flex-shrink: 0;
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  border: 1px solid transparent;
+  user-select: none;
+  cursor: grab;
+}
+
+.chip:active {
+  cursor: grabbing;
+}
+
+.chipFeature {
+  background: color-mix(in srgb, var(--ant-color-success) 16%, transparent);
+  border-color: color-mix(in srgb, var(--ant-color-success) 35%, transparent);
+  color: var(--ant-color-success-text);
+}
+
+.chipFunc {
+  background: color-mix(in srgb, var(--ant-color-primary) 14%, transparent);
+  border-color: color-mix(in srgb, var(--ant-color-primary) 35%, transparent);
+  color: var(--ant-color-primary-text);
+}
+
+.chipOp {
+  background: var(--ant-color-fill-secondary);
+  border-color: var(--ant-color-border);
+  min-width: 28px;
+  justify-content: center;
+  font-weight: 600;
+}
+
+.chipParen {
+  background: color-mix(in srgb, var(--ant-color-info) 14%, transparent);
+  border-color: color-mix(in srgb, var(--ant-color-info) 40%, transparent);
+  font-weight: 700;
+}
+
+.chipNumber {
+  background: color-mix(in srgb, var(--ant-color-warning) 16%, transparent);
+  border-color: color-mix(in srgb, var(--ant-color-warning) 35%, transparent);
+}
+
+.chipActive {
+  outline: 2px solid var(--ant-color-primary);
+  outline-offset: 1px;
+}
+
+.chipMatch {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--ant-color-info) 45%, transparent);
+}
+
+.sectionTitle {
+  font-size: 12px;
+  color: var(--ant-color-text-secondary);
+  margin-bottom: 6px;
+}
+
+.palette {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.paletteBtn {
+  font-family: ui-monospace, Consolas, 'SF Mono', monospace;
+}
+
+.preview {
+  font-family: ui-monospace, Consolas, 'SF Mono', monospace;
+  font-size: 12px;
+  padding: 8px 10px;
+  background: var(--ant-color-fill-quaternary);
+  border-radius: 6px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--ant-color-text-secondary);
+  line-height: 1.5;
+}
+
+.emptyHint {
+  color: var(--ant-color-text-quaternary);
+  font-size: 13px;
+}
+
+.validOk {
+  font-size: 12px;
+  color: var(--ant-color-success);
+}
+
+.validErr {
+  font-size: 12px;
+  color: var(--ant-color-error);
+}
+
+.validWarn {
+  font-size: 12px;
+  color: var(--ant-color-warning);
+}

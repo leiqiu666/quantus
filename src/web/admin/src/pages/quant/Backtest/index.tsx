@@ -18,7 +18,7 @@ import { useSseTask } from '@/components/SseTask';
 import BacktestDetailDrawer from '@/components/quant/BacktestDetailDrawer';
 import {
   getBacktestRun,
-  getFactorList,
+  getFactorOptions,
   listBacktestRuns,
   listFactorCombos,
 } from '@/services/quant';
@@ -48,7 +48,7 @@ export default function BacktestPage() {
   const [detail, setDetail] = useState<BacktestRunItem | null>(null);
 
   useEffect(() => {
-    void Promise.all([getFactorList(), listFactorCombos()])
+    void Promise.all([getFactorOptions(), listFactorCombos()])
       .then(([fs, cs]) => {
         setFactors(fs);
         setCombos(cs);

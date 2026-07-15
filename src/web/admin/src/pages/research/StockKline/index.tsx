@@ -20,7 +20,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import { getFactorList } from '@/services/quant';
+import { getFactorOptions } from '@/services/quant';
 import { getStockKline } from '@/services/research';
 import type { FactorMetaItem } from '@/types/quant';
 
@@ -49,7 +49,7 @@ export default function StockKlinePage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    void getFactorList()
+    void getFactorOptions()
       .then(setFactors)
       .catch(() => undefined);
   }, []);

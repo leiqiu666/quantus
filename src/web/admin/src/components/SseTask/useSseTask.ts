@@ -37,6 +37,10 @@ export type EtlTaskParams = {
     stampDutyRate?: number;
     slippageRate?: number;
   };
+  factorCompute?: {
+    factorName: string;
+    force?: boolean;
+  };
 };
 
 export type RowSequenceStepParams = EtlTaskParams & {
@@ -72,6 +76,7 @@ function buildTaskPayload(params: EtlTaskParams, id: string) {
     startDate: params.startDate,
     endDate: params.endDate,
     backtest: params.backtest,
+    factorCompute: params.factorCompute,
   };
 }
 

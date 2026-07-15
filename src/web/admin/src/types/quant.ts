@@ -4,9 +4,41 @@ export interface FactorMetaItem {
   source: string;
   category: string | null;
   formula: string | null;
+  impl_kind: string | null;
+  python_path: string | null;
   start_date: string | null;
   end_date: string | null;
   month_count: number | null;
+}
+
+export interface FactorMetaListResponse {
+  items: FactorMetaItem[];
+  total: number;
+}
+
+export interface FeatureMetaItem {
+  id: number;
+  feature_name: string;
+  display_name: string | null;
+  feature_kind: string;
+  source_kind: string;
+  source_path: string | null;
+  source_column: string | null;
+  transform: string | null;
+  frequency: string;
+  domain: string;
+  dtype: string;
+  formula: string | null;
+  start_date: string | null;
+  end_date: string | null;
+  enabled: number;
+  sort_order: number;
+  remark: string | null;
+}
+
+export interface FeatureMetaListResponse {
+  items: FeatureMetaItem[];
+  total: number;
 }
 
 export interface FactorComboItem {

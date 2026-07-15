@@ -12,6 +12,7 @@ import Home from '@/pages/Home';
 import Demo1 from '@/pages/demo/Demo1';
 import Demo2 from '@/pages/demo/Demo2';
 import NotFound from '@/pages/NotFound';
+import FeatureList from '@/pages/quant/FeatureList';
 import FactorList from '@/pages/quant/FactorList';
 import FactorComboPage from '@/pages/quant/FactorCombo';
 import BacktestPage from '@/pages/quant/Backtest';
@@ -155,12 +156,17 @@ export const routesConfig: RouteConfig[] = [
   },
   {
     path: '/quant',
-    name: '回测管理',
+    name: '因子管理',
     icon: <StockOutlined />,
     children: [
       {
+        path: '/quant/feature-list',
+        name: '特征管理',
+        element: <FeatureList />,
+      },
+      {
         path: '/quant/factor-list',
-        name: '因子管理',
+        name: '因子列表',
         element: <FactorList />,
       },
       {

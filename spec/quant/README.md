@@ -17,7 +17,10 @@
 | [因子框架-起步.sdd.md](./因子框架-起步.sdd.md) | `research factor compute / list` | BaseFactor + Registry + Parquet | Phase 1 · 基本落地 |
 | [因子热层与CLI.sdd.md](./因子热层与CLI.sdd.md) | `factor update-all / sync-pg` | `factor_latest` 宽表 + Research CLI | Phase 1 · 已落地（热层仅自研） |
 | [Tushare技术因子入库.sdd.md](./Tushare技术因子入库.sdd.md) | `tushare-factor pull-by-date-range` | 93 因子 → Parquet 长表 | Phase 1 · 已落地 |
-| [Admin-因子管理.sdd.md](./Admin-因子管理.sdd.md) | Admin `/quant/factor-list` | 因子元数据只读列表 | 已落地 |
+| [Admin-因子管理.sdd.md](./Admin-因子管理.sdd.md) | Admin `/quant/factor-list` | 编辑（公式/Python只读）+ 生成 SSE | **已落地** |
+| [Admin-特征管理.sdd.md](./Admin-特征管理.sdd.md) | Admin `/quant/feature-list` | 特征目录 feature_meta | **已落地** |
+| [特征目录.sdd.md](./特征目录.sdd.md) | PG `feature_meta` | 公式符号 / 血缘 / 覆盖 | **已落地** |
+| [Python因子目录.sdd.md](./Python因子目录.sdd.md) | `research/factor/python/` | 复杂 BaseFactor 专用目录 | **已落地** |
 | [多源因子统一与读取层.sdd.md](./多源因子统一与读取层.sdd.md) | `FactorDataset` + `sync-pg` 扩展 | 权威源定界、热层含 tushare、OHLC 后复权 | **Phase 1.5 · 已实现** |
 | [截面回测.sdd.md](./截面回测.sdd.md) | `backtest run` | 自研截面引擎、IC/分组净值 | **Phase 2 · 已实现** |
 | [国泰191因子.sdd.md](./国泰191因子.sdd.md) | `gtja191 compute` / SSE `gtja191_compute` | 190 可算 Alpha → Parquet；Alpha30 仅 meta | **Phase 3 · 已实现** |

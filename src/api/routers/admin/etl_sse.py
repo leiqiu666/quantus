@@ -27,12 +27,14 @@ _SSE_DESC = (
     " report history init 类仅使用 start_date 作为报告期锚点。"
     " task_key=backtest_run 时使用扩展字段 backtest_mode / factor_name / combo_id 等。"
     " task_key=gtja191_compute 时可传 workers。"
+    " task_key=factor_compute 时必传 factor_name，可选 force。"
     " 执行写入 schedule_run（triggered_by=gap_fill），可在执行历史查看/停止。"
 )
 
 _TASK_LABELS = {
     "backtest_run": "回测",
     "gtja191_compute": "国泰191计算",
+    "factor_compute": "因子计算",
 }
 
 
@@ -58,6 +60,14 @@ def _invoke_runner(body: EtlSseRunRequest, end: str, q) -> None:
         )
     elif body.task_key == "gtja191_compute":
         runner(body.start_date, end, q, workers=body.workers)
+    elif body.task_key == "factor_compute":
+        runner(
+            body.start_date,
+            end,
+            q,
+            factor_name=body.factor_name,
+            force=bool(body.force),
+        )
     else:
         runner(body.start_date, end, q)
 
@@ -77,6 +87,9 @@ async def run_etl_sse(
 
     end = body.end_date or datetime.now().strftime("%Y%m%d")
     label = _task_label(body.task_key)
+
+    if body.task_key == "factor_compute" and not body.factor_name:
+        raise HTTPException(status_code=400, detail="factor_compute 需要 factor_name")
 
     def _worker(q):
         run_tracked_gap_fill(

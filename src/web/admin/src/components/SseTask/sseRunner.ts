@@ -43,6 +43,10 @@ export interface EtlSseRunParams {
     stampDutyRate?: number;
     slippageRate?: number;
   };
+  factorCompute?: {
+    factorName: string;
+    force?: boolean;
+  };
 }
 
 export interface ExecuteEtlSseOptions extends EtlSseRunParams {
@@ -116,6 +120,10 @@ function resolveBody(params: EtlSseRunParams): Record<string, unknown> {
     if (params.backtest.slippageRate != null) {
       body.slippage_rate = params.backtest.slippageRate;
     }
+  }
+  if (params.taskKey === 'factor_compute' && params.factorCompute) {
+    body.factor_name = params.factorCompute.factorName;
+    body.force = params.factorCompute.force ?? false;
   }
   return body;
 }

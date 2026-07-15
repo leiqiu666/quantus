@@ -285,6 +285,9 @@ SSE_TASK_REGISTRY: dict[str, Callable[..., None]] = {
     "gtja191_compute": lambda start, end, q, **kwargs: _run_gtja191_compute(
         start, end, q, **kwargs
     ),
+    "factor_compute": lambda start, end, q, **kwargs: _run_factor_compute(
+        start, end, q, **kwargs
+    ),
     "backtest_run": lambda start, end, q, **kwargs: _run_backtest(start, end, q, **kwargs),
 }
 
@@ -303,6 +306,71 @@ def _run_gtja191_compute(
         workers=int(workers) if workers is not None else None,
         progress_queue=progress_queue,
     )
+    try:
+        FactorMetaService().update_meta()
+    except Exception as e:
+        progress_queue.put({"log": f"update-meta 失败: {e}"})
+
+
+def _run_factor_compute(
+    start: str, end: str, progress_queue: queue.Queue, **kwargs
+) -> None:
+    import re
+
+    from src.etl.strategy.kline.kline_factor_compute_strategy import FactorComputeStrategy
+    from src.model.kline.factor_meta_model import FactorMetaModel
+    from src.research.factor.gtja.strategy import Gtja191Strategy
+    from src.research.factor.meta_service import FactorMetaService
+
+    name = (kwargs.get("factor_name") or "").strip()
+    if not name:
+        progress_queue.put({"done": True, "saved": 0, "message": "缺少 factor_name"})
+        return
+    force = bool(kwargs.get("force"))
+    sm, em = start[:6], end[:6]
+
+    row = FactorMetaModel().get_by_name(name)
+    impl = (getattr(row, "impl_kind", None) if row else None) or ""
+    source = (row.source if row else "") or ""
+    if not impl:
+        if source == "国泰191" or name.startswith("gtja_alpha"):
+            impl = "formula"
+        elif source == "自研":
+            impl = "python"
+        elif source == "tushare":
+            impl = "tushare"
+
+    if impl == "tushare":
+        msg = "tushare 因子请使用 Research CLI：tushare-factor pull-by-date-range"
+        progress_queue.put({"done": True, "saved": 0, "message": msg})
+        return
+
+    if impl == "formula" or name.startswith("gtja_alpha"):
+        m = re.fullmatch(r"gtja_alpha(\d+)", name)
+        if not m:
+            progress_queue.put({
+                "done": True,
+                "saved": 0,
+                "message": f"无法解析国泰因子编号: {name}",
+            })
+            return
+        alpha = int(m.group(1))
+        Gtja191Strategy().compute(
+            start_month=sm,
+            end_month=em,
+            alpha=alpha,
+            force=force,
+            progress_queue=progress_queue,
+        )
+    else:
+        FactorComputeStrategy().compute_factor(
+            name,
+            start_month=sm,
+            end_month=em,
+            force=force,
+            progress_queue=progress_queue,
+        )
+
     try:
         FactorMetaService().update_meta()
     except Exception as e:

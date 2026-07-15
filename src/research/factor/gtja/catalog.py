@@ -113,3 +113,42 @@ def list_computable_alphas(alpha: int | None = None) -> list[GtjaAlphaSpec]:
 
 def factor_name(n: int) -> str:
     return f"gtja_alpha{n}"
+
+
+def _strip_meta_skip_suffix(formula: str) -> str:
+    s = (formula or "").strip()
+    if "｜[" in s:
+        return s.split("｜[", 1)[0].strip()
+    return s
+
+
+def overlay_db_formulas(specs: list[GtjaAlphaSpec]) -> list[GtjaAlphaSpec]:
+    """用 factor_meta.formula 覆盖文档公式（Admin 编辑生效）。"""
+    try:
+        from src.model.kline.factor_meta_model import FactorMetaModel
+
+        fmap = FactorMetaModel().list_formula_map()
+    except Exception:
+        return specs
+    if not fmap:
+        return specs
+    out: list[GtjaAlphaSpec] = []
+    for s in specs:
+        raw = _strip_meta_skip_suffix(fmap.get(s.name, ""))
+        if not raw or raw == s.formula_raw:
+            out.append(s)
+            continue
+        out.append(
+            GtjaAlphaSpec(
+                n=s.n,
+                name=s.name,
+                formula_raw=raw,
+                formula_eval=_normalize_formula(raw),
+                needs_ff=s.needs_ff,
+                needs_benchmark=s.needs_benchmark,
+                needs_self=s.needs_self,
+                skip_compute=s.skip_compute,
+                skip_reason=s.skip_reason,
+            )
+        )
+    return out

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import queue
+
 from src.common.function import tqdm_iter
 from src.research.dataset.kline import KlineDataset
 from src.research.factor.load import FactorParquetLoad
@@ -21,6 +23,7 @@ class FactorComputeStrategy:
         start_month: str | None = None,
         end_month: str | None = None,
         force: bool = False,
+        progress_queue: queue.Queue | None = None,
     ) -> int:
         FactorRegistry.auto_discover()
         factor = FactorRegistry.get(name)
@@ -37,15 +40,33 @@ class FactorComputeStrategy:
             targets = [m for m in targets if m not in existing]
 
         if not targets:
-            print(f"因子 {name}：无需计算（已全部覆盖或无可用日K数据）")
+            msg = f"因子 {name}：无需计算（已全部覆盖或无可用日K数据）"
+            print(msg)
+            if progress_queue is not None:
+                progress_queue.put({"done": True, "saved": 0, "message": msg})
             return 0
 
         total = 0
-        for ym in tqdm_iter(targets, desc=f"计算因子 {name}"):
+        n = len(targets)
+        if progress_queue is not None:
+            progress_queue.put({"status": "running", "total": n})
+        for i, ym in enumerate(tqdm_iter(targets, desc=f"计算因子 {name}"), start=1):
+            if progress_queue is not None:
+                progress_queue.put({"log": f"计算 {name} · {ym}（{i}/{n}）"})
             rows = self._workflow.compute_month(factor, ym)
             total += rows
+            if progress_queue is not None:
+                progress_queue.put({
+                    "index": i,
+                    "total": n,
+                    "period": ym,
+                    "saved": rows,
+                })
 
-        print(f"因子 {name}：计算完成，覆盖 {len(targets)} 个月，共 {total} 行")
+        msg = f"因子 {name}：计算完成，覆盖 {len(targets)} 个月，共 {total} 行"
+        print(msg)
+        if progress_queue is not None:
+            progress_queue.put({"done": True, "saved": total, "message": msg})
         return total
 
     def compute_all_factors(

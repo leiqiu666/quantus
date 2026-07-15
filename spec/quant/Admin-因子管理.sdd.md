@@ -1,86 +1,61 @@
-# SDD · Admin · 因子管理页面
+# SDD · Admin · 因子列表与编辑 / 生成
 
-> **路由：** `/quant/factor-list`
-> **菜单：** 回测管理 → 因子管理
-> **依赖 API：** `GET /api/admin/quant/factor/list`（见 [`spec/api/admin/因子-因子列表.sdd.md`](../api/admin/因子-因子列表.sdd.md)）
-> **源码：** `src/web/admin/src/pages/quant/FactorList/index.tsx`
+> **路由：** `/quant/factor-list`  
+> **菜单：** 因子管理 → 因子列表  
+> **依赖：**  
+> - [`因子-因子列表.sdd.md`](../api/admin/因子-因子列表.sdd.md)  
+> - [`因子-编辑与源码.sdd.md`](../api/admin/因子-编辑与源码.sdd.md)  
+> - [`因子-生成-SSE.sdd.md`](../api/admin/因子-生成-SSE.sdd.md)  
+> **源码：** `src/web/admin/src/pages/quant/FactorList/index.tsx`  
+> **相关：** [`Python因子目录.sdd.md`](./Python因子目录.sdd.md)
 
 ---
 
 ## 1. 概述
 
-在 Admin 后台「回测管理」一级菜单下设「因子管理」页面。展示系统中所有可用因子（自研 + Tushare），包括名称、来源、分类、算法、数据覆盖区间。
+展示 `factor_meta`（分页）。按 `impl_kind` 提供编辑与生成：
+
+| impl_kind | 编辑 | 生成 |
+|-----------|------|------|
+| `formula` | 可改公式 → PG；计算优先 DB | SSE `factor_compute`（国泰按名） |
+| `python` | 只读展示 `factor/python/*.py` | SSE `factor_compute`（自研 Strategy） |
+| `tushare` | 只读映射说明 | 按钮禁用（走 Research CLI） |
 
 ---
 
-## 2. 路由配置
+## 2. 菜单
 
-在 `routes.config.tsx` 新增：
-
-```tsx
-{
-  path: '/quant',
-  name: '回测管理',
-  icon: <StockOutlined />,
-  children: [
-    {
-      path: '/quant/factor-list',
-      name: '因子管理',
-      element: <FactorList />,
-    },
-  ],
-},
-```
+1. 特征管理 `/quant/feature-list`
+2. 因子列表 `/quant/factor-list`
+3. 因子组合
+4. 回测
 
 ---
 
-## 3. 页面设计
+## 3. 页面行为
 
-### 3.1 ProTable 列表
+### 3.1 列表
 
-| 列 | 字段 | 宽度 | 筛选 | 说明 |
-|----|------|------|------|------|
-| 因子名称 | factor_name | 180 | - | 代码中使用的名称 |
-| 中文名 | display_name | 200 | - | 可读描述 |
-| 来源 | source | 80 | 下拉筛选 | `自研` / `tushare` |
-| 分类 | category | 100 | 下拉筛选 | 基本面 / 技术 / 量价 / 统计 |
-| 算法 | formula | 250 | - | 计算规则说明 |
-| 起始日 | start_date | 100 | - | Parquet 最早日 |
-| 截止日 | end_date | 100 | - | Parquet 最晚日 |
-| 月份数 | month_count | 80 | - | 已有分区数 |
+- 列：名称、中文名、来源、impl_kind、分类、公式摘要、覆盖起止、月份数
+- 筛选：source / category / keyword；分页默认 20
+- 操作：编辑、生成、回测（有覆盖时）
 
-### 3.2 筛选栏
+### 3.2 编辑 Drawer
 
-- 来源：ValueEnum 下拉（自研 / tushare / 全部）
-- 分类：ValueEnum 下拉（基本面 / 技术 / 量价 / 统计 / 全部）
-- 搜索按钮 + 重置按钮
+- **formula**：可视化公式编辑器（特征点选 / 运算符号 / 常用函数 / 拖拽）→ 保存 `PUT /factor/{name}`
+- **python**：只读代码 + `python_path` 提示（`GET .../source`）
+- **tushare**：只读 `formula` / display_name
 
-### 3.3 无分页
+### 3.3 生成
 
-因子总数 ~100 个，全量返回，前端不分页。`search: false` 或 ProTable 内置筛选即可。
+- 弹窗：起止日期（或按月）、force 覆盖已有月份
+- SSE `task_key=factor_compute`，参数 `factor_name`、`start_date`、`end_date`、`force`
+- 国泰整批仍可用页头「计算国泰191」→ `gtja191_compute`
 
 ---
 
-## 4. 文件清单
+## 4. 存储（因子值）
 
-```
-src/web/admin/src/
-  pages/quant/
-    FactorList/
-      index.tsx              # ProTable 页面组件
-  services/
-    quant.ts                 # getFactorList API 调用
-  types/
-    quant.ts                 # FactorMetaItem 类型定义
-  routes/
-    routes.config.tsx        # +回测管理菜单
-```
-
----
-
-## 5. 验收
-
-1. 左侧菜单出现「回测管理 → 因子管理」
-2. 点击进入看到 95 个因子列表
-3. 按来源筛选 `tushare` → 显示 93 个
-4. 按分类筛选 `基本面` → 显示基本面因子
+权威：`{WAREHOUSE_ROOT}/factor/{factor_name}/dt=YYYYMM/` 长表 `ts_code, trade_date, value`。  
+元数据：PG `factor_meta`（含 `impl_kind`、`python_path`、`formula`）。  
+热层：`factor_latest`。详见 [`量化层完整方案.md`](../../docs/量化层完整方案.md)。

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import csv
+import inspect
 import re
 from pathlib import Path
 
@@ -17,10 +18,13 @@ from src.entities.client_entities.tushare_entities import (
     STK_FACTOR_PRO_RENAME,
 )
 
+_REPO_ROOT = Path(__file__).resolve().parents[3]
+_PYTHON_FACTOR_PREFIX = "src.research.factor.python."
+
 
 def _load_tushare_descriptions() -> dict[str, tuple[str, str]]:
     """从 docs/tushare因子.csv 读取 tushare原名 → (短名, 完整描述)。"""
-    csv_path = Path(__file__).resolve().parents[3] / "docs" / "tushare因子.csv"
+    csv_path = _REPO_ROOT / "docs" / "tushare因子.csv"
     if not csv_path.exists():
         return {}
     result: dict[str, tuple[str, str]] = {}
@@ -37,7 +41,6 @@ def _load_tushare_descriptions() -> dict[str, tuple[str, str]]:
 
 
 def _tushare_factor_category(orig_name: str) -> str:
-    """按 tushare 原始字段名推断分类。"""
     fundamentals = {
         "turnover_rate", "turnover_rate_f", "volume_ratio",
         "pe", "pe_ttm", "pb", "ps", "ps_ttm",
@@ -52,13 +55,23 @@ def _tushare_factor_category(orig_name: str) -> str:
     return "技术"
 
 
+def _python_path_for_factor(factor) -> str | None:
+    try:
+        mod = factor.__class__.__module__ or ""
+        if not mod.startswith(_PYTHON_FACTOR_PREFIX):
+            return None
+        path = Path(inspect.getfile(factor.__class__)).resolve()
+        return str(path.relative_to(_REPO_ROOT)).replace("\\", "/")
+    except Exception:
+        return None
+
+
 class FactorMetaService:
     def __init__(self) -> None:
         self._db = Database()
         self._factor_root = Path(settings.warehouse_root) / "factor"
 
     def _scan_parquet_dates(self, factor_name: str) -> tuple[str | None, str | None, int]:
-        """扫描某因子的 Parquet，返回 (start_date, end_date, month_count)。"""
         fdir = self._factor_root / factor_name
         if not fdir.exists():
             return None, None, 0
@@ -92,30 +105,40 @@ class FactorMetaService:
         months.sort()
         return months[0] + "01", months[-1] + "31", len(months)
 
+    def _existing_formulas(self) -> dict[str, str]:
+        from src.model.kline.factor_meta_model import FactorMetaModel
+
+        try:
+            return FactorMetaModel().list_formula_map()
+        except Exception:
+            return {}
+
     def update_meta(self) -> int:
-        """扫描所有因子来源，upsert 到 PG factor_meta。"""
         self._db.ensure_table(FactorMetaEntities)
+        existing_formulas = self._existing_formulas()
 
         records: list[dict] = []
 
-        # 1. 自研因子（formula 含 adj_convention=hfq）
         FactorRegistry.auto_discover()
         for meta in FactorRegistry.list_all():
             start, end, mc = self._scan_parquet_dates(meta.name)
             params = dict(meta.params) if meta.params else {}
             params.setdefault("adj_convention", "hfq")
+            factor = FactorRegistry.get(meta.name)
+            py_path = _python_path_for_factor(factor)
             records.append({
                 "factor_name": meta.name,
                 "display_name": meta.display_name,
                 "source": "自研",
                 "category": meta.category,
                 "formula": str(params),
+                "impl_kind": "python",
+                "python_path": py_path,
                 "start_date": start,
                 "end_date": end,
                 "month_count": mc,
             })
 
-        # 2. Tushare 因子
         tushare_descs = _load_tushare_descriptions()
         self_names = {m.name for m in FactorRegistry.list_all()}
 
@@ -128,7 +151,6 @@ class FactorMetaService:
 
             start, end, mc = self._scan_parquet_dates(local)
             short, full_desc = tushare_descs.get(orig, (local, orig))
-            # formula 去掉与 display_name 重复的中文前缀，只保留参数部分
             params_part = full_desc.split("-", 1)[1] if "-" in full_desc else full_desc
             records.append({
                 "factor_name": local,
@@ -136,12 +158,13 @@ class FactorMetaService:
                 "source": "tushare",
                 "category": _tushare_factor_category(orig),
                 "formula": f"{orig}｜{params_part}",
+                "impl_kind": "tushare",
+                "python_path": None,
                 "start_date": start,
                 "end_date": end,
                 "month_count": mc,
             })
 
-        # 3. 国泰 191
         try:
             from src.research.factor.gtja.catalog import load_catalog
 
@@ -150,15 +173,30 @@ class FactorMetaService:
                 if spec.name in reserved:
                     continue
                 start, end, mc = self._scan_parquet_dates(spec.name)
-                formula = spec.formula_raw
+                catalog_formula = spec.formula_raw
                 if spec.skip_reason:
-                    formula = f"{formula}｜[{spec.skip_reason}]" if formula else spec.skip_reason
+                    catalog_formula = (
+                        f"{catalog_formula}｜[{spec.skip_reason}]"
+                        if catalog_formula
+                        else spec.skip_reason
+                    )
+                # 后台编辑过的公式优先保留（跳过原因后缀的 catalog 种子不覆盖用户公式）
+                preserved = existing_formulas.get(spec.name)
+                if preserved and "｜[" not in (preserved or ""):
+                    formula = preserved
+                elif preserved and not catalog_formula:
+                    formula = preserved
+                else:
+                    # 若保留的是带 skip 的旧值且 catalog 有正文，仍允许用 preserved
+                    formula = preserved if preserved else catalog_formula
                 records.append({
                     "factor_name": spec.name,
                     "display_name": f"国泰Alpha{spec.n}",
                     "source": "国泰191",
                     "category": "gtja191",
                     "formula": formula,
+                    "impl_kind": "formula",
+                    "python_path": None,
                     "start_date": start,
                     "end_date": end,
                     "month_count": mc,
@@ -177,7 +215,7 @@ class FactorMetaService:
             skip_length_check=True,
         )
 
-        by_source = {}
+        by_source: dict[str, list] = {}
         for r in records:
             by_source.setdefault(r["source"], []).append(r)
 

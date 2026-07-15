@@ -12,7 +12,10 @@
 | [K线-日列表](./K线-日列表.sdd.md) | POST | `/api/admin/kline/daily/trade-date-list` | JSON |
 | [股票-列表查询](./股票-列表查询.sdd.md) | GET | `/api/admin/stock/list` | JSON |
 | [通达信-tq代理](./通达信-tq代理.sdd.md) | GET / POST | `/api/admin/tdx/{functions\|{function_name}}` | JSON |
-| [因子-因子列表](./因子-因子列表.sdd.md) | GET | `/api/admin/quant/factor/list` | JSON |
+| [因子-因子列表](./因子-因子列表.sdd.md) | GET | `/api/admin/quant/factor/list` | JSON（分页） |
+| [因子-编辑与源码](./因子-编辑与源码.sdd.md) | GET/PUT | `/api/admin/quant/factor/{name}`、`.../source` | JSON |
+| [因子-生成-SSE](./因子-生成-SSE.sdd.md) | POST | `/api/admin/etl/sse/run`（`factor_compute`） | **SSE** |
+| [特征-特征列表](./特征-特征列表.sdd.md) | GET/POST/PUT | `/api/admin/quant/feature/*` | JSON |
 | [回测-运行与结果](./回测-运行与结果.sdd.md) | POST SSE / GET | `/api/admin/etl/sse/run`（`backtest_run`）；`/api/admin/quant/backtest/runs` | SSE / JSON |
 | [回测-因子组合](./回测-因子组合.sdd.md) | GET/POST/PUT/DELETE | `/api/admin/quant/factor-combo` | JSON |
 | [回测-明细表](./回测-明细表.sdd.md) | GET | `/api/admin/quant/backtest/runs/{run_id}/tables` | JSON |

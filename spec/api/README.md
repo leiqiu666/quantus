@@ -59,7 +59,10 @@
 | [K线-日列表](./admin/K线-日列表.sdd.md) | POST | `/api/admin/kline/daily/trade-date-list` | JSON |
 | [股票-列表查询](./admin/股票-列表查询.sdd.md) | GET | `/api/admin/stock/list` | JSON |
 | [通达信-tq代理](./admin/通达信-tq代理.sdd.md) | GET / POST | `/api/admin/tdx/*` | JSON |
-| [因子-因子列表](./admin/因子-因子列表.sdd.md) | GET | `/api/admin/quant/factor/list` | JSON |
+| [因子-因子列表](./admin/因子-因子列表.sdd.md) | GET | `/api/admin/quant/factor/list` | JSON（分页） |
+| [因子-编辑与源码](./admin/因子-编辑与源码.sdd.md) | GET/PUT | `/api/admin/quant/factor/{name}` | JSON |
+| [因子-生成-SSE](./admin/因子-生成-SSE.sdd.md) | POST | `/api/admin/etl/sse/run`（`factor_compute`） | SSE |
+| [特征-特征列表](./admin/特征-特征列表.sdd.md) | GET/POST/PUT | `/api/admin/quant/feature/*` | JSON |
 
 **合计 11 个 HTTP 端点**（3 个 SSE + 8 个 JSON）。
 

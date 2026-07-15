@@ -15,7 +15,7 @@ import {
 import type { ProColumns } from '@ant-design/pro-components';
 import { ProTable } from '@ant-design/pro-components';
 import dayjs, { type Dayjs } from 'dayjs';
-import { getFactorList, listFactorCombos } from '@/services/quant';
+import { getFactorOptions, listFactorCombos } from '@/services/quant';
 import { getFactorCs } from '@/services/research';
 import type { FactorCombo, FactorMetaItem } from '@/types/quant';
 
@@ -36,7 +36,7 @@ export default function FactorCsPage() {
   const [label, setLabel] = useState('');
 
   useEffect(() => {
-    void Promise.all([getFactorList(), listFactorCombos()])
+    void Promise.all([getFactorOptions(), listFactorCombos()])
       .then(([fs, cs]) => {
         setFactors(fs);
         setCombos(cs);
